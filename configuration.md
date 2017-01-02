@@ -1,8 +1,8 @@
 # Configuration
 
-All configurations have default values, things will work as you expected with `iris.New()` 
+All configurations have default values, things will work as you expected with `iris.New()`
 
-but if you want to customize iris then pass `iris.New(iris.Configuration{})` or use the options-func, example: `iris.New(iris.OptionCharset("UTF-8"))` 
+but if you want to customize iris then pass `iris.New(iris.Configuration{})` or use the options-func, example: `iris.New(iris.OptionCharset("UTF-8"))`
 
 `.New` **by configuration**
 ```go
@@ -10,7 +10,8 @@ import "github.com/kataras/iris"
 //...
 
 myConfig := iris.Configuration{Charset: "UTF-8", IsDevelopment:true, Sessions: iris.SessionsConfiguration{Cookie:"mycookie"}, Websocket: iris.WebsocketConfiguration{Endpoint: "/my_endpoint"}}
-iris.New(myConfig)
+
+app := iris.New(myConfig)
 ```
 
 `.New` **by options**
@@ -21,12 +22,12 @@ import "github.com/kataras/iris"
 
 iris.New(iris.OptionCharset("UTF-8"), iris.OptionIsDevelopment(true), iris.OptionSessionsCookie("mycookie"), iris.OptionWebsocketEndpoint("/my_endpoint"))
 
-// if you want to set configuration after the .New use the .Set: 
+// if you want to set configuration after the .New use the .Set:
 iris.Set(iris.OptionDisableBanner(true))
 ```
 
 
-### List of available options
+### Some of the available settings are:
 
 ```go
 // OptionDisablePathCorrection corrects and redirects the requested path to the registed path
@@ -37,8 +38,6 @@ iris.Set(iris.OptionDisableBanner(true))
 // Default is false
 OptionDisablePathCorrection(val bool)
 
-// OptionDisablePathEscape when is false then its escapes the path, the named parameters (if any).
-OptionDisablePathEscape(val bool)
 
 // OptionDisableBanner outputs the iris banner at startup
 //
@@ -153,200 +152,104 @@ Note: One iris instance can have and listening to many iris' Servers, one iris' 
 
 
 ```go
-// examples:
-iris.AddServer(iris.OptionServerCertFile("file.cert"),iris.OptionServerKeyFile("file.key"))
-iris.ListenTo(iris.OptionServerReadBufferSize(42000))
+app := iris.New()
 
-// or 
-iris.AddServer(iris.ServerConfiguration{ListeningAddr: "mydomain.com", CertFile: "file.cert", KeyFile: "file.key"})
-iris.ListenTo(iris.ServerConfiguration{ReadBufferSize:42000, ListeningAddr: "mydomain.com"})
+// your routes and other configuration here...
+app.Get("/", indexHandler)
 
-// both are valid
+// start the main server in goroutine
+go app.Listen(":80")
+
+// create and start a new native server whith the iris' router
+fsrv := &http.Server{Handler: app.Router, Addr: ":8080"}
+fsrv.ListenAndServe()
 ```
 
-**List** of all Server's options:
+```go
+app := iris.New()
+
+// your routes and other configuration here...
+app.Get("/", indexHandler)
+
+// build your iris in order make the Router
+app.Build()
+
+// create and start a new native server whith the iris' router
+fsrv := &http.Server{Handler: app.Router, Addr: ":8080"}
+go fsrv.ListenAndServe()
+
+// or ignore the main server, you can use only the native one if you liked so.
+app.Listen(":80")
+```
+
+**List** of all iris' Server's config:
 
 ```go
-OptionServerListeningAddr(val string)
-
-OptionServerCertFile(val string)
-
-OptionServerKeyFile(val string)
-
-// AutoTLS enable to get certifications from the Letsencrypt
-// when this configuration field is true, the CertFile & KeyFile are empty, no need to provide a key.
+// VHost is the addr or the domain that server listens to, which it's optional
+// When to set VHost manually:
+// 1. it's automatically setted when you're calling
+//     $instance.Listen/ListenUNIX/ListenTLS/ListenLETSENCRYPT functions or
+//     ln,_ := iris.TCP4/UNIX/TLS/LETSENCRYPT; $instance.Serve(ln)
+// 2. If you using a balancer, or something like nginx
+//    then set it in order to have the correct url
+//    when calling the template helper '{{url }}'
+//    *keep note that you can use {{urlpath }}) instead*
 //
-// example: https://github.com/iris-contrib/examples/blob/master/letsencyrpt/main.go
-OptionServerAutoTLS(val bool)
+// Note: this is the main's server Host, you can setup unlimited number of net/http servers
+// listening to the $instance.Handler after the manually-called $instance.Build
+//
+// Default comes from iris.Listen/.Serve with iris' listeners (iris.TCP4/UNIX/TLS/LETSENCRYPT)
+VHost string
 
-// Mode this is for unix only
-OptionServerMode(val os.FileMode)
-// OptionServerMaxRequestBodySize Maximum request body size.
+// VScheme is the scheme (http:// or https://) putted at the template function '{{url }}'
+// It's an optional field,
+// When to set VScheme manually:
+// 1. You didn't start the main server using $instance.Listen/ListenTLS/ListenLETSENCRYPT or $instance.Serve($instance.TCP4()/.TLS...)
+// 2. if you're using something like nginx and have iris listening with addr only(http://) but the nginx mapper is listening to https://
 //
-// The server rejects requests with bodies exceeding this limit.
-//
-// By default request body size is 8MB.
-OptionServerMaxRequestBodySize(val int)
+// Default comes from iris.Listen/.Serve with iris' listeners (TCP4,UNIX,TLS,LETSENCRYPT)
+VScheme string
 
-// Per-connection buffer size for requests' reading.
-// This also limits the maximum header size.
-//
-// Increase this buffer if your clients send multi-KB RequestURIs
-// and/or multi-KB headers (for example, BIG cookies).
-//
-// Default buffer size is used if not set.
-OptionServerReadBufferSize(val int)
+ReadTimeout  time.Duration // maximum duration before timing out read of the request
+WriteTimeout time.Duration // maximum duration before timing out write of the response
 
-// Per-connection buffer size for responses' writing.
-//
-// Default buffer size is used if not set.
-OptionServerWriteBufferSize(val int)
+// MaxHeaderBytes controls the maximum number of bytes the
+// server will read parsing the request header's keys and
+// values, including the request line. It does not limit the
+// size of the request body.
+// If zero, DefaultMaxHeaderBytes is used.
+MaxHeaderBytes int
 
-// Maximum duration for reading the full request (including body).
-//
-// This also limits the maximum duration for idle keep-alive
-// connections.
-//
-// By default request read timeout is unlimited.
-OptionServerReadTimeout(val time.Duration)
+// TLSNextProto optionally specifies a function to take over
+// ownership of the provided TLS connection when an NPN/ALPN
+// protocol upgrade has occurred. The map key is the protocol
+// name negotiated. The Handler argument should be used to
+// handle HTTP requests and will initialize the Request's TLS
+// and RemoteAddr if not already set. The connection is
+// automatically closed when the function returns.
+// If TLSNextProto is nil, HTTP/2 support is enabled automatically.
+TLSNextProto map[string]func(*http.Server, *tls.Conn, http.Handler)
 
-// Maximum duration for writing the full response (including body).
-//
-// By default response write timeout is unlimited.
-OptionServerWriteTimeout(val time.Duration)
-
-// RedirectTo, defaults to empty, set it in order to override the station's handler and redirect all requests to this address which is of form(HOST:PORT or :PORT)
-//
-// NOTE: the http status is 'StatusMovedPermanently', means one-time-redirect(the browser remembers the new addr and goes to the new address without need to request something from this server
-// which means that if you want to change this address you have to clear your browser's cache in order this to be able to change to the new addr.
-//
-// example: https://github.com/iris-contrib/examples/tree/master/multiserver_listening2
-OptionServerRedirectTo(val string)
-
-// OptionServerVirtual If this server is not really listens to a real host, it mostly used in order to achieve testing without system modifications
-OptionServerVirtual(val bool)
-
-// OptionServerVListeningAddr, can be used for both virtual = true or false,
-// if it's setted to not empty, then the server's Host() will return this addr instead of the ListeningAddr.
-// server's Host() is used inside global template helper funcs
-// set it when you are sure you know what it does.
-//
-// Default is empty ""
-OptionServerVListeningAddr(val string)
-
-// OptionServerVScheme if setted to not empty value then all template's helper funcs prepends that as the url scheme instead of the real scheme
-// server's .Scheme returns VScheme if  not empty && differs from real scheme
-//
-// Default is empty ""
-OptionServerVScheme(val string)
-
-// OptionServerName the server's name, defaults to "iris".
-// You're free to change it, but I will trust you to don't, this is the only setting whose somebody, like me, can see if iris web framework is used
-OptionServerName(val string)
+// ConnState specifies an optional callback function that is
+// called when a client connection changes state. See the
+// ConnState type and associated constants for details.
+ConnState func(net.Conn, http.ConnState)
 
 ```    
 
-### The main Configuration
 ```go
-type Configuration struct {
-	// DisablePathCorrection corrects and redirects the requested path to the registed path
-	// for example, if /home/ path is requested but no handler for this Route found,
-	// then the Router checks if /home handler exists, if yes,
-	// (permant)redirects the client to the correct path /home
-	//
-	// Default is false
-	DisablePathCorrection bool
+package main
 
-	// DisablePathEscape when is false then its escapes the path, the named parameters (if any).
-	// Change to true it if you want something like this https://github.com/kataras/iris/issues/135 to work
-	//
-	// When do you need to Disable(true) it:
-	// accepts parameters with slash '/'
-	// Request: http://localhost:8080/details/Project%2FDelta
-	// ctx.Param("project") returns the raw named parameter: Project%2FDelta
-	// which you can escape it manually with net/url:
-	// projectName, _ := url.QueryUnescape(c.Param("project").
-	// Look here: https://github.com/kataras/iris/issues/135 for more
-	//
-	// Default is false
-	DisablePathEscape bool
+import (
+	"github.com/kataras/iris"
+)
 
-	// DisableBanner outputs the iris banner at startup
-	//
-	// Default is false
-	DisableBanner bool
+func main(){
+	app := iris.New(iris.Configuration{VHost: "mydomain.com", VScheme: "https://"})
 
-	// LoggerOut is the destination for output
-	//
-	// Default is os.Stdout
-	LoggerOut io.Writer
-	// LoggerPreffix is the logger's prefix to write at beginning of each line
-	//
-	// Default is [IRIS]
-	LoggerPreffix string
-
-	// ProfilePath a the route path, set it to enable http pprof tool
-	// Default is empty, if you set it to a $path, these routes will handled:
-	// $path/cmdline
-	// $path/profile
-	// $path/symbol
-	// $path/goroutine
-	// $path/heap
-	// $path/threadcreate
-	// $path/pprof/block
-	// for example if '/debug/pprof'
-	// http://yourdomain:PORT/debug/pprof/
-	// http://yourdomain:PORT/debug/pprof/cmdline
-	// http://yourdomain:PORT/debug/pprof/profile
-	// http://yourdomain:PORT/debug/pprof/symbol
-	// http://yourdomain:PORT/debug/pprof/goroutine
-	// http://yourdomain:PORT/debug/pprof/heap
-	// http://yourdomain:PORT/debug/pprof/threadcreate
-	// http://yourdomain:PORT/debug/pprof/pprof/block
-	// it can be a subdomain also, for example, if 'debug.'
-	// http://debug.yourdomain:PORT/
-	// http://debug.yourdomain:PORT/cmdline
-	// http://debug.yourdomain:PORT/profile
-	// http://debug.yourdomain:PORT/symbol
-	// http://debug.yourdomain:PORT/goroutine
-	// http://debug.yourdomain:PORT/heap
-	// http://debug.yourdomain:PORT/threadcreate
-	// http://debug.yourdomain:PORT/pprof/block
-	ProfilePath string
-
-	// DisableTemplateEngines set to true to disable loading the default template engine (html/template) and disallow the use of iris.UseEngine
-	// default is false
-	DisableTemplateEngines bool
-
-	// IsDevelopment iris will act like a developer, for example
-	// If true then re-builds the templates on each request
-	// default is false
-	IsDevelopment bool
-
-	// TimeFormat time format for any kind of datetime parsing
-	TimeFormat string
-
-	// Charset character encoding for various rendering
-	// used for templates and the rest of the responses
-	// defaults to "UTF-8"
-	Charset string
-
-	// Gzip enables gzip compression on your Render actions, this includes any type of render, templates and pure/raw content
-	// If you don't want to enable it globaly, you could just use the third parameter on context.Render("myfileOrResponse", structBinding{}, iris.RenderOptions{"gzip": true})
-	// defaults to false
-	Gzip bool
-
-	// Sessions contains the configs for sessions
-	Sessions SessionsConfiguration
-
-	// Websocket contains the configs for Websocket's server integration
-	Websocket WebsocketConfiguration
-
-	// Other are the custom, dynamic options, can be empty
-	// this fill used only by you to set any app's options you want
-	// for each of an Iris instance
-	Other options.Options
+	app.Listen(":8080")
 }
 ```
+
 
 View all configuration fields and options by navigating to the [kataras/iris/configuration.go source file](https://github.com/kataras/iris/blob/master/configuration.go), to view the testing configuration move [here](https://github.com/kataras/iris/blob/master/httptest/httptest.go)

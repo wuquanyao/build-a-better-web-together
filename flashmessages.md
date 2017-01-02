@@ -11,20 +11,20 @@ The name is a string: often "notice", "success", or "error", but it can be anyth
 
 
 ```go
+HasFlash() bool
 
-// SetFlash sets a flash message, accepts 2 parameters the key(string) and the value(string)
-// the value will be available on the NEXT request
-SetFlash(key string, value string)
+GetFlash(string) interface{}
 
-// GetFlash gets a flash message by it's key
-// returns the value as string and an error
-//
-// if the cookie doesn't exists the string is empty and the error is filled.
-// after the request's life the value is removed
-GetFlash(key string) (value string, err error)
+GetFlashString(string) string
 
-// GetFlashes returns all the flash messages which are available for this request 
-GetFlashes() map[string]string
+GetFlashes() map[string]interface{}
+
+SetFlash(string, interface{})
+
+DeleteFlash(string)
+
+ClearFlashes()
+
 ```
 
 Example
@@ -40,29 +40,29 @@ import (
 func main() {
 
 	iris.Get("/set", func(c *iris.Context) {
-		c.SetFlash("name", "iris")
-		c.Write("Message set, is available for the next request")
+		c.Session().SetFlash("name", "iris")
+		c.Session().Writef("Message set, is available for the next request")
 	})
 
 	iris.Get("/get", func(c *iris.Context) {
-		name, err := c.GetFlash("name")
-		if err != nil {
-			c.Write(err.Error())
+		name := c.Session().GetFlashString("name")
+		if name =="" {
+			c.Writef(err.Error())
 			return
 		}
-		c.Write("Hello %s", name)
+		c.Writef("Hello %s", name)
 	})
 
 	iris.Get("/test", func(c *iris.Context) {
 
-		name, err := c.GetFlash("name")
-		if err != nil {
-			c.Write(err.Error())
+		name := c.Session().GetFlashString("name")
+		if name =="" {
+			c.Write("name not found")
 			return
 		}
 
-		c.Write("Ok you are comming from /set, the value of the name is %s", name)
-		c.Write(", and again from the same context: %s", name)
+		c.Writef("Ok you are comming from /set, the value of the name is %s", name)
+		c.Writef(", and again from the same context: %s", name)
 
 	})
 
