@@ -22,7 +22,7 @@ ServeContent(content io.ReadSeeker, filename string, modtime time.Time, enableGz
 // Use it when you want to serve css/js/... files to the client, for bigger files and 'force-download' use the SendFile
 ServeFile(filename string, enableGzip bool) error 	
 // You can define your own "Content-Type" header also, after this function call
-// for example: ctx.Response.Header.Set("Content-Type","thecontent/type")
+// for example: ctx.SetHeader("Content-Type","thecontent/type")
 SendFile(filename string, destinationName string)
 ```
 
