@@ -8,9 +8,9 @@ package main
 import "github.com/kataras/iris"
 
 func main() {
-    admin := iris.Party("/admin", 
+    admin := iris.Party("/admin",
 	    func(ctx *iris.Context){
-     	   ctx.Write("Middleware for all party's routes!")
+     	   ctx.Writef("Middleware for all party's routes!")
 		   ctx.Next();
 		})
     {
@@ -27,21 +27,20 @@ func main() {
 
         })
         admin.Get("/", func(c *iris.Context) {
-            c.Write("from /admin/ or /admin if you pathcorrection on")
+            c.Writef("from /admin/ or /admin if you pathcorrection on")
         })
         admin.Get("/dashboard", func(c *iris.Context) {
-            c.Write("/admin/dashboard")
+            c.Writef("/admin/dashboard")
         })
         admin.Delete("/delete/:userId", func(c *iris.Context) {
-            c.Write("admin/delete/%s", c.Param("userId"))
+            c.Writef("admin/delete/%s", c.Param("userId"))
         })
     }
 
 
     beta := admin.Party("/beta")
-    beta.Get("/hey", func(c *iris.Context) { c.Write("hey from /admin/beta/hey") })
+    beta.Get("/hey", func(c *iris.Context) { c.Writef("hey from /admin/beta/hey") })
 
     iris.Listen(":8080")
 }
 ```
-

@@ -3,6 +3,50 @@
 Body binder reads values from the body and sets them to a specific object.
 
 ```go
+
+// BodyDecoder is an interface which any struct can implement in order to customize the decode action
+// from ReadJSON and ReadXML
+//
+// Trivial example of this could be:
+// type User struct { Username string }
+//
+// func (u *User) Decode(data []byte) error {
+//	  return json.Unmarshal(data, u)
+// }
+//
+// the 'context.ReadJSON/ReadXML(&User{})' will call the User's
+// Decode option to decode the request body
+//
+// Note: This is totally optionally, the default decoders
+// for ReadJSON is the encoding/json and for ReadXML is the encoding/xml
+type BodyDecoder interface {
+	Decode(data []byte) error
+}
+
+// Unmarshaler is the interface implemented by types that can unmarshal any raw data
+// TIP INFO: Any v object which implements the BodyDecoder can be override the unmarshaler
+type Unmarshaler interface {
+	Unmarshal(data []byte, v interface{}) error
+}
+
+// UnmarshalerFunc a shortcut for the Unmarshaler interface
+//
+// See 'Unmarshaler' and 'BodyDecoder' for more
+type UnmarshalerFunc func(data []byte, v interface{}) error
+
+// Unmarshal parses the X-encoded data and stores the result in the value pointed to by v.
+// Unmarshal uses the inverse of the encodings that Marshal uses, allocating maps,
+// slices, and pointers as necessary.
+func (u UnmarshalerFunc) Unmarshal(data []byte, v interface{}) error {
+	return u(data, v)
+}
+
+// methods:
+
+// UnmarshalBody reads the request's body and binds it to a value or pointer of any type
+// Examples of usage: context.ReadJSON, context.ReadXML
+UnmarshalBody(v interface{}, unmarshaler Unmarshaler) error
+
 // ReadJSON reads JSON from request's body
 ReadJSON(jsonObject interface{}) error
 
@@ -44,7 +88,7 @@ func MyHandler(c *iris.Context) {
   	panic(err.Error())
   }
 }
-  
+
 func main() {
   iris.Get("/bind_json", MyHandler)
   iris.Listen(":8080")
@@ -75,13 +119,13 @@ type Company struct {
    Founders   []string
    Employees  int64
 }
-  
+
 func MyHandler(c *iris.Context) {  
   if err := c.ReadXML(&Company{}); err != nil {
   	panic(err.Error())
   }
 }
-  
+
 func main() {
   iris.Get("/bind_xml", MyHandler)
   iris.Listen(":8080")
@@ -236,7 +280,7 @@ type Company struct {
   }
   Founders   []string
   Employees  int64
-  
+
   Interface interface{}
 }
 
@@ -244,12 +288,12 @@ func MyHandler(c *iris.Context) {
   m := Company{
       Interface: &InterfaceStruct{},
   }
-  
+
   if err := c.ReadForm(&m); err != nil {
   		panic(err.Error())
   }
 }
-  
+
 func main() {
   iris.Get("/bind_form", MyHandler)
   iris.Listen(":8080")
@@ -258,7 +302,7 @@ func main() {
 
 ### Custom Decoder per Object
 
-`BodyDecoder` gives the ability to set a custom decoder **per passed object** when `context.ReadJSON` and `context.ReadXML` 
+`BodyDecoder` gives the ability to set a custom decoder **per passed object** when `context.ReadJSON` and `context.ReadXML`
 
 ```go
 // BodyDecoder is an interface which any struct can implement in order to customize the decode action

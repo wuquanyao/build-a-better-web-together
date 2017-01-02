@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	//iris.Use(recovery.New(os.Stdout)) 
+	//iris.Use(recovery.New(os.Stdout))
     // this is an optional parameter, you can skip it, the default is os.Stderr
 	iris.Use(recovery.New())
 	i := 0
@@ -29,7 +29,7 @@ func main() {
 		ctx.Next()
 
 	}, func(ctx *iris.Context) {
-		ctx.Write("Hello, refresh one time more to get panic!")
+		ctx.Writef("Hello, refresh one time more to get panic!")
 	})
 
 	iris.Listen(":8080")

@@ -6,7 +6,7 @@ type myHandlerGet struct {
 }
 
 func (m myHandlerGet) Serve(c *iris.Context) {
-    c.Write("From %s", c.PathString())
+    c.Writef("From %s", c.PathString())
 }
 
 // and so on

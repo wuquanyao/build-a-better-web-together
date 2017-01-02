@@ -1,7 +1,21 @@
 # Named Parameters
 
-Named parameters are just custom paths for your routes, you can access them for each request 
-using context's `c.Param("nameoftheparameter")`. Use `c.Params` to get all values as an array ({K,V}).
+Named parameters are just custom paths for your routes, you can access them for each request
+using context
+
+```go
+// Param returns the string representation of the key's path named parameter's value
+Param(key string) string
+
+// ParamDecoded returns a url-query-decoded path parameter's value
+ParamDecoded(key string) string
+
+// ParamInt returns the int representation of the key's path named parameter's value
+ParamInt(key string) (int, error)
+
+// ParamInt64 returns the int64 representation of the key's path named parameter's value
+ParamInt64(key string) (int64, error)
+```
 
 There's no limit on how long a path can be.
 
@@ -23,7 +37,7 @@ func main() {
 	iris.Get("/hello/:name", func(c *iris.Context) {
 		// Retrieve the parameter name
 		name := c.Param("name")
-		c.Write("Hello %s", name)
+		c.Writef("Hello %s", name)
 	})
 
 	// Matches /profile/iris/friends/1, (if PathCorrection:true match also /profile/iris/friends/1/)
@@ -41,16 +55,16 @@ func main() {
 		c.HTML(iris.StatusOK, "<b> Hello </b>"+fullname+"<b> with friends ID </b>"+strconv.Itoa(friendID))
 	})
 
-	// Route Example: 
+	// Route Example:
 	// /posts/:id and /posts/new conflict with each other for performance reasons and simplicity (dynamic value conficts with the static 'new').   
-	// but if you need to have them you can do following: 
+	// but if you need to have them you can do following:
 	iris.Get("/posts/*action", func(ctx *iris.Context) {
 		action := ctx.Param("action")
 		if action == "/new" {
 			// it's posts/new page
-			ctx.Write("POSTS NEW")
+			ctx.Writef("POSTS NEW")
 		} else {
-			ctx.Write("OTHER POSTS")
+			ctx.Writef("OTHER POSTS")
 			// it's posts/:id page
 			//doSomething with the action which is the id
 		}

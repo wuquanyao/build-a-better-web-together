@@ -82,7 +82,7 @@ import (
 	"github.com/kataras/iris"
 )
 
-// register your auth via configs, providers with non-empty 
+// register your auth via configs, providers with non-empty
 // values will be registered to goth automatically by Iris
 var configs = oauth.Config{
 	Path: "/auth", //defaults to /oauth
@@ -123,7 +123,7 @@ func main() {
 
 	// set a login success handler (you can use more than one handler)
 	// if the user succeed to logged in
-	// client comes here from: localhost:3000/config.RouteName/lowercase_provider_name/callback 's first handler, 
+	// client comes here from: localhost:3000/config.RouteName/lowercase_provider_name/callback 's first handler,
 	// but the previous url is the localhost:3000/config.RouteName/lowercase_provider_name
 	authentication.Success(func(ctx *iris.Context) {
 		// if user couldn't validate then server sends StatusUnauthorized, which you can handle by:  authentication.Fail OR iris.OnError(iris.StatusUnauthorized, func(ctx *iris.Context){})
@@ -144,7 +144,7 @@ func main() {
 }
 
 ```
-View: 
+View:
 ```html
 <!-- ./templates/index.html -->
 
@@ -297,7 +297,7 @@ func main() {
 		user, err := gothic.CompleteUserAuth(ctx)
 		if err != nil {
 			ctx.SetStatusCode(iris.StatusUnauthorized)
-			ctx.Write(err.Error())
+			ctx.Writef(err.Error())
 			return
 		}
 

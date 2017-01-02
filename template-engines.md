@@ -6,7 +6,7 @@ Install the go-template package.
 $ go get -u github.com/kataras/go-template
 ```
 
-## Iris' Station configuration 
+## Iris' Station configuration
 
 Remember, when 'station' we mean the default `iris.$CALL ` or `api:= iris.New(); api.$CALL`
 
@@ -19,7 +19,7 @@ iris.Config.Charset = "UTF-8" // defaults to "UTF-8", the same for Serializers a
 iris.Set(iris.OptionIsDevelopment(true),iris.OptionGzip(true), iris.OptionCharset("UTF-8"))
 // or
 iris.New(iris.OptionIsDevelopment(true),iris.OptionGzip(true), iris.OptionCharset("UTF-8"))
-// or 
+// or
 iris.New(iris.Configuration{IsDevelopment:true, Gzip:true, Charset: "UTF-8" })
 
 ```
@@ -93,7 +93,7 @@ func hi(ctx *iris.Context) {
 ```
 
 ```html
- <!-- ./templates/mypage.html --> 
+ <!-- ./templates/mypage.html -->
 <h1>
 	Title: {{.Title}}
 </h1>
@@ -288,7 +288,7 @@ func main() {
 
 	iris.Get("/", func(ctx *iris.Context) {
 		s := iris.TemplateString("page1.html", nil)
-		ctx.Write("The plain content of the template is: %s", s)
+		ctx.Writef("The plain content of the template is: %s", s)
 	})
 
 	iris.Listen(":8080")
@@ -364,7 +364,7 @@ func main() {
 }
 
 func emptyHandler(ctx *iris.Context) {
-	ctx.Write("Hello from %s.", ctx.PathString())
+	ctx.Writef("Hello from %s.", ctx.PathString())
 
 }
 
@@ -455,7 +455,7 @@ func main() {
 }
 
 func emptyHandler(ctx *iris.Context) {
-	ctx.Write("[SUBDOMAIN: %s]Hello from Path: %s.", ctx.Subdomain(), ctx.PathString())
+	ctx.Writef("[SUBDOMAIN: %s]Hello from Path: %s.", ctx.Subdomain(), ctx.PathString())
 }
 
 
@@ -568,7 +568,7 @@ func main() {
 }
 
 func emptyHandler(ctx *iris.Context) {
-	ctx.Write("[SUBDOMAIN: %s]Hello from Path: %s.", ctx.Subdomain(), ctx.PathString())
+	ctx.Writef("[SUBDOMAIN: %s]Hello from Path: %s.", ctx.Subdomain(), ctx.PathString())
 }
 
 
@@ -675,7 +675,7 @@ func main() {
 	// remove the layout for a specific route using iris.NoLayout
 	iris.Get("/nolayout", func(ctx *iris.Context) {
 		if err := ctx.Render("home.html", nil, iris.RenderOptions{"layout": iris.NoLayout}); err != nil {
-			ctx.Write(err.Error())
+			ctx.Writef(err.Error())
 		}
 	})
 
@@ -859,7 +859,7 @@ func main() {
 }
 
 func emptyHandler(ctx *iris.Context) {
-	ctx.Write("[SUBDOMAIN: %s]Hello from Path: %s.", ctx.Subdomain(), ctx.PathString())
+	ctx.Writef("[SUBDOMAIN: %s]Hello from Path: %s.", ctx.Subdomain(), ctx.PathString())
 }
 
 // Note than you can see more Pug/Jade syntax examples by navigating to https://github.com/Joker/jade
@@ -934,7 +934,7 @@ func main() {
 ```
 
 
-**Custom template engine** 
+**Custom template engine**
 
 Simply, you have to implement only **3  functions**, for load and execute the templates. One optionally (**Funcs() map[string]interface{}**) which is used to register the iris' helpers funcs like `{{ url }}` and `{{ urlpath }}`.
 
@@ -953,7 +953,7 @@ type (
 		// ExecuteWriter finds, execute a template and write its result to the out writer
 		// options are the optional runtime options can be passed by user
 		// an example of this is the "layout" or "gzip" option
-		ExecuteWriter(out io.Writer, name string, binding interface{}, options ...map[string]interface{}) error
+		ExecuteWriter(out io.Writefr, name string, binding interface{}, options ...map[string]interface{}) error
 	}
 
 	// TemplateEngineFuncs is optional interface for the TemplateEngine
@@ -1010,7 +1010,7 @@ func main() {
 		// THIS WORKS WITH ALL TEMPLATE ENGINES, but I am not doing the same example for all engines again :) (the same you can do with templates using the iris.SerializeToString)
 		rawHtmlContents := iris.TemplateString("mypage.html", map[string]interface{}{"username": "iris", "is_admin": true}, iris.RenderOptions{"charset": "UTF-8"}) // defaults to UTF-8 already
 		ctx.Log(rawHtmlContents)
-		ctx.Write("The Raw HTML is:\n%s", rawHtmlContents)
+		ctx.Writef("The Raw HTML is:\n%s", rawHtmlContents)
 	})
 
 	iris.Listen(":8080")
@@ -1027,6 +1027,6 @@ func main() {
 -----
 
 
- - examples are located [here](https://github.com/iris-contrib/examples/tree/master/template_engines/) 
+ - examples are located [here](https://github.com/iris-contrib/examples/tree/master/template_engines/)
 
-- You can contribute to create more template engines for Iris, click [here](https://github.com/kataras/go-template) to navigate to the repository. 
+- You can contribute to create more template engines for Iris, click [here](https://github.com/kataras/go-template) to navigate to the repository.

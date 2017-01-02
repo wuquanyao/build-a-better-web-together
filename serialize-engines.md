@@ -4,7 +4,7 @@ Default Serializers[*](https://github.com/kataras/go-serializers/) are already i
 
 ## Iris' Station configuration
 
-Remember, by 'station' we mean the default `iris.$CALL ` or `api:= iris.New(); api.$CALL` 
+Remember, by 'station' we mean the default `iris.$CALL ` or `api:= iris.New(); api.$CALL`
 
 ```go
 iris.Config.Gzip = true // compresses/gzips response content to the client (same for Template Engines), defaults to false
@@ -14,11 +14,11 @@ iris.Config.Charset = "UTF-8" // defaults to "UTF-8" (same for Template Engines 
 iris.Set(iris.OptionGzip(true), iris.OptionCharset("UTF-8"))
 // or
 iris.New(iris.OptionGzip(true), iris.OptionCharset("UTF-8"))
-// or 
+// or
 iris.New(iris.Configuration{ Gzip:true, Charset: "UTF-8" })
 ```
 
-They can be overriden for specific `Render` actions: 
+They can be overriden for specific `Render` actions:
 ```go
 func(ctx *iris.Context){
  ctx.Render("any/contentType", anyValue{}, iris.RenderOptions{"gzip":false, "charset": "UTF-8"})
@@ -87,7 +87,7 @@ import "github.com/kataras/iris"
 func main() {
 	iris.Config.Charset = "UTF-8" // this is the default, you don't have to set it manually
 
-	myString := "this is just a simple string which you can already render with ctx.Write"
+	myString := "this is just a simple string which you can also render with ctx.Writef"
 
 	iris.Get("/", func(ctx *iris.Context) {
 		ctx.Text(iris.StatusOK, myString)
@@ -119,7 +119,7 @@ func main() {
 
 You can create a custom Serializer using a func or an interface which implements the
 ` serializer.Serializer`  which contains a simple function: ` Serialize(val interface{}, options ...map[string]interface{}) ([]byte, error)
-` 
+`
 
 A custom engine can be used to register a totally new content writer for a known ContentType or for a custom ContentType.  
 
@@ -254,7 +254,7 @@ All features of Sundown are supported, including:
 
 *   **Standards compliant**. Output successfully validates using the
     W3C validation tool for HTML 4.01 and XHTML 1.0 Transitional.
-	
+
 	[this is a link](https://github.com/kataras/iris) `
 
 	iris.Get("/", func(ctx *iris.Context) {
@@ -264,7 +264,7 @@ All features of Sundown are supported, including:
 		htmlContents := iris.SerializeToString("text/markdown", markdownContents, iris.RenderOptions{"charset": "8859-1"}) // default is the iris.Config.Charset, which is UTF-8
 
 		ctx.Log(htmlContents)
-		ctx.Write("The Raw HTML is:\n%s", htmlContents)
+		ctx.Writef("The Raw HTML is:\n%s", htmlContents)
 	})
 
 	iris.Listen(":8080")
@@ -654,7 +654,7 @@ All features of Sundown are supported, including:
 
 *   **Standards compliant**. Output successfully validates using the
     W3C validation tool for HTML 4.01 and XHTML 1.0 Transitional.
-	
+
 	[this is a link](https://github.com/kataras/iris) `
 
 	iris.Get("/", func(ctx *iris.Context) {
@@ -744,7 +744,7 @@ All features of Sundown are supported, including:
 
 *   **Standards compliant**. Output successfully validates using the
     W3C validation tool for HTML 4.01 and XHTML 1.0 Transitional.
-	
+
 	[this is a link](https://github.com/kataras/iris) `
 
 	//first example
@@ -820,7 +820,7 @@ func main() {
 ```
 
 
- ----- 
+ -----
 
  - examples are located [here](https://github.com/iris-contrib/examples/tree/master/serialize_engines/).
 

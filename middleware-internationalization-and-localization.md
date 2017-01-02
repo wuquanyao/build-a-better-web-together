@@ -6,19 +6,19 @@
 
 Create folder named 'locales':
 ```
-// Files: 
+// Files:
 
-./locales/locale_en-US.ini 
-./locales/locale_el-US.ini 
+./locales/locale_en-US.ini
+./locales/locale_el-US.ini
 ```
 Contents on locale_en-US:
-``` 
+```
 hi = hello, %s
-``` 
+```
 Contents on locale_el-GR:
-``` 
+```
 hi = Γειά, %s
-``` 
+```
 
 ```go
 
@@ -36,13 +36,13 @@ func main() {
 		Languages: map[string]string{
 			"en-US": "./locales/locale_en-US.ini",
 			"el-GR": "./locales/locale_el-GR.ini",
-			"zh-CN": "./locales/locale_zh-CN.ini"}}))	
-	
+			"zh-CN": "./locales/locale_zh-CN.ini"}}))
+
 	iris.Get("/", func(ctx *iris.Context) {
 		hi := ctx.GetFmt("translate")("hi", "maki") // hi is the key, 'maki' is the %s, the second parameter is optional
 		language := ctx.Get("language") // language is the language key, example 'en-US'
 
-		ctx.Write("From the language %s translated output: %s", language, hi)
+		ctx.Writef("From the language %s translated output: %s", language, hi)
 	})
 
 	iris.Listen(":8080")

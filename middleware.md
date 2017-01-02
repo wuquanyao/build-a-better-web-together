@@ -4,7 +4,7 @@
 
 ```go
 // First mount static files
-iris.Static("/assets", "./public/assets", 1)
+iris.StaticWeb("/assets", "./public/assets")
 
 // Then declare which middleware to use (custom or not)
 iris.Use(myMiddleware{})
@@ -104,7 +104,7 @@ iris.Get("/dashboard", func(c *iris.Context) {
         c.Next()
     }
 }, mySecondMiddleware, func (c *iris.Context){
-    c.Write("The last HandlerFunc is the main handler, everything before that is middleware for this route /dashboard")
+    c.Writef("The last HandlerFunc is the main handler, everything before that is middleware for this route /dashboard")
 })
 
 iris.Listen(":8080")
@@ -144,22 +144,22 @@ package main
 import "github.com/kataras/iris"
 
 func firstMiddleware(ctx *iris.Context) {
-    ctx.Write("1. This is the first middleware, before any of route handlers \n")
+    ctx.Writef("1. This is the first middleware, before any of route handlers \n")
     ctx.Next()
 }
 
 func secondMiddleware(ctx *iris.Context) {
-    ctx.Write("2. This is the second middleware, before the '/' route handler \n")
+    ctx.Writef("2. This is the second middleware, before the '/' route handler \n")
     ctx.Next()
 }
 
 func thirdMiddleware(ctx *iris.Context) {
-    ctx.Write("3. This is the 3rd middleware, after the '/' route handler \n")
+    ctx.Writef("3. This is the 3rd middleware, after the '/' route handler \n")
     ctx.Next()
 }
 
 func lastAlwaysMiddleware(ctx *iris.Context) {
-    ctx.Write("4. This is ALWAYS the last Handler \n")
+    ctx.Writef("4. This is ALWAYS the last Handler \n")
 }
 
 func main() {
@@ -168,7 +168,7 @@ func main() {
     iris.DoneFunc(lastAlwaysMiddleware)
 
     iris.Get("/", secondMiddleware, func(ctx *iris.Context) {
-        ctx.Write("Hello from / \n")
+        ctx.Writef("Hello from / \n")
         ctx.Next() // .Next because we 're using the third middleware after that, and lastAlwaysMiddleware also
     }, thirdMiddleware)
 
@@ -188,22 +188,22 @@ package main
 import "github.com/kataras/iris"
 
 func firstMiddleware(ctx *iris.Context) {
-    ctx.Write("1. This is the first middleware, before any of route handlers \n")
+    ctx.Writef("1. This is the first middleware, before any of route handlers \n")
     ctx.Next()
 }
 
 func secondMiddleware(ctx *iris.Context) {
-    ctx.Write("2. This is the second middleware, before the '/' route handler \n")
+    ctx.Writef("2. This is the second middleware, before the '/' route handler \n")
     ctx.Next()
 }
 
 func thirdMiddleware(ctx *iris.Context) {
-    ctx.Write("3. This is the 3rd middleware, after the '/' route handler \n")
+    ctx.Writef("3. This is the 3rd middleware, after the '/' route handler \n")
     ctx.Next()
 }
 
 func lastAlwaysMiddleware(ctx *iris.Context) {
-    ctx.Write("4. This is ALWAYS the last Handler \n")
+    ctx.Writef("4. This is ALWAYS the last Handler \n")
 }
 
 func main() {
@@ -212,7 +212,7 @@ func main() {
     myParty := iris.Party("/myparty", firstMiddleware).DoneFunc(lastAlwaysMiddleware)
     {
         myParty.Get("/", secondMiddleware, func(ctx *iris.Context) {
-            ctx.Write("Hello from /myparty/ \n")
+            ctx.Writef("Hello from /myparty/ \n")
             ctx.Next() // .Next because we 're using the third middleware after that, and lastAlwaysMiddleware also
         }, thirdMiddleware)
 

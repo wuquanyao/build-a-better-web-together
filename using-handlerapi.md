@@ -4,8 +4,8 @@ HandlerAPI is any custom struct which has an `*iris.Context` field and known met
 
 Before continuing I'd like you to note that this method is slower than `iris.Get, Post..., Handle, HandleFunc`.
 
-It might sound awful, I'm not using it myself, I did it because there developers used to frameworks 
-with the 'MVC' pattern, so think of it like the 'Controller'. 
+It might sound awful, I'm not using it myself, I did it because there developers used to frameworks
+with the 'MVC' pattern, so think of it like the 'Controller'.
 If you don't care about routing performance(~ms) and you like to spend some code time, you're free to use it.
 
 Instead of writing Handlers/HandlerFuncs for each API routes, you can use the `iris.API` function.
@@ -50,13 +50,13 @@ type UserAPI struct {
 
 // GET /users
 func (u UserAPI) Get() {
-    u.Write("Get from /users")
+    u.Writef("Get from /users")
     // u.JSON(iris.StatusOK, myDb.AllUsers())
 }
 
 // GET /:param1 param1's value is the 'id' param
 func (u UserAPI) GetBy(id string) { // id equals to u.Param("param1")
-    u.Write("Get from /users/%s", id)
+    u.Writef("Get from /users/%s", id)
     // u.JSON(iris.StatusOK, myDb.GetUserById(id))
 }
 
@@ -117,4 +117,3 @@ func myUsersMiddleware2(ctx *iris.Context) {
 ```
 
 Available methods: "GET", "POST", "PUT", "DELETE", "CONNECT", "HEAD", "PATCH", "OPTIONS", "TRACE" should use this **naming convention**:  **Get/GetBy, Post/PostBy, Put/PutBy** and so on...
-

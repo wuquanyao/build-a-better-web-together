@@ -1,9 +1,9 @@
-# Using native http.Handler via iris.ToHandlerFunc()
+# Using native http.Handler via iris.ToHandler()
 
 ```go
-iris.Get("/letsget", iris.ToHandlerFunc(nativehandler{}))
-iris.Post("/letspost", iris.ToHandlerFunc(nativehandler{}))
-iris.Put("/letsput", iris.ToHandlerFunc(nativehandler{}))
-iris.Delete("/letsdelete", iris.ToHandlerFunc(nativehandler{}))
+iris.Get("/letsget", iris.ToHandler(nativehandler{}))
+iris.Post("/letspost", iris.ToHandler(nativehandler{}))
+iris.Put("/letsput", iris.ToHandler(nativehandler{}))
+iris.Delete("/letsdelete", iris.ToHandler(nativehandler{}))
 
 ```

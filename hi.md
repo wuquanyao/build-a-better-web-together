@@ -7,7 +7,7 @@ import "github.com/kataras/iris"
 
 func main() {
     iris.Get("/hi", func(ctx *iris.Context) {
-        ctx.Write("Hi %s", "iris")
+        ctx.Writef("Hi %s", "iris")
     })
     iris.Listen(":8080")
 }
@@ -28,7 +28,7 @@ func main() {
 }
 
 func hi(ctx *iris.Context){
-   ctx.Write("Hi %s", "iris")
+   ctx.Writef("Hi %s", "iris")
 }
 
 ```
@@ -94,4 +94,3 @@ func hi(ctx *iris.Context){
 ```
 
 More about render and template engines [here](render.md).
-

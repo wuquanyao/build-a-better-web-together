@@ -1,10 +1,10 @@
 # Plugins
 
-Plugins are modules which get injected into Iris' flow. They're like middleware for the Iris framework itself. 
-Middlewares start their actions after the server processes requests and get executed on every request, 
-plugins on the other hand start working when you registered them. 
-Plugins work with the framework's code, they have access to the *iris.Framework, so they are able register routes, 
-start a second server, read Iris' configs or edit them and so on. 
+Plugins are modules which get injected into Iris' flow. They're like middleware for the Iris framework itself.
+Middlewares start their actions after the server processes requests and get executed on every request,
+plugins on the other hand start working when you registered them.
+Plugins work with the framework's code, they have access to the iris.Framework, so they are able register routes,
+start a second server, read Iris' configs or edit them and so on.
 The Plugin interface looks this:
 
 ```go
@@ -127,7 +127,7 @@ func main() {
 }
 
 func aHandler(ctx *iris.Context) {
-	ctx.Write("Hello from: %s", ctx.PathString())
+	ctx.Writef("Hello from: %s", ctx.PathString())
 }
 
 type myPlugin struct{}
@@ -150,7 +150,7 @@ func (pl myPlugin) PostListen(s *iris.Framework) {
 
 ```
 
-An example of one plugin which is under development is Iris control, a web interface that gives you remote control to your Iris web server. 
+An example of one plugin which is under development is Iris control, a web interface that gives you remote control to your Iris web server.
 You can find it's code [here](https://github.com/iris-contrib/plugin/tree/master/iriscontrol).
 
 Take a look at [the plugin.go](https://github.com/iris-contrib/plugin), it's easy to make your own plugin.
