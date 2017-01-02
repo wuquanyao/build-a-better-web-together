@@ -145,7 +145,7 @@ func main() {
 ### Disabling caching
 
 
-Caching can be disabled by setting `github.com/kataras/iris/config`'s `StaticCacheDuration` to `time.Duration(1)` **before calling any of the named functions**. Setting `StaticCacheDuration` to `time.Duration(0)` will reset the cache time to 10 seconds (as specified in fasthttp).
+Caching can be disabled by setting `github.com/kataras/iris/config`'s `StaticCacheDuration` to `time.Duration(1)` **before calling any of the named functions**. Setting `StaticCacheDuration` to `time.Duration(0)` will reset the cache time to 10 seconds.
 
 ## Favicon
 

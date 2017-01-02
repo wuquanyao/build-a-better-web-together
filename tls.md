@@ -89,8 +89,8 @@ func main() {
 
 Examples:
 
-* [Listen using a custom fasthttp server](https://github.com/iris-contrib/examples/tree/master/custom_fasthttp_server)
-* [Serve content using a custom router](https://github.com/iris-contrib/examples/tree/master/custom_fasthttp_router)
+* [Listen using a custom net/http server](https://github.com/iris-contrib/examples/tree/master/custom_nethttp_server)
+* [Serve content using a custom router](https://github.com/iris-contrib/examples/tree/master/custom_nethttp_router)
 * [Listen using a custom net.Listener](https://github.com/iris-contrib/examples/tree/master/custom_net_listener)
 * [Redirect all http://$HOST to https://$HOST using a custom net.Listener](https://github.com/iris-contrib/examples/tree/master/listentls)
 * [Listen using automatic ssl](https://github.com/iris-contrib/examples/tree/master/letsencrypt)

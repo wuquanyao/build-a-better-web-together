@@ -17,12 +17,12 @@ func main() {
         // add a silly middleware
         admin.UseFunc(func(c *iris.Context) {
             //your authentication logic here...
-            println("from ", c.PathString())
+            println("from ", c.Path())
             authorized := true
             if authorized {
                 c.Next()
             } else {
-                c.Text(401, c.PathString()+" is not authorized for you")
+                c.Text(401, c.Path()+" is not authorized for you")
             }
 
         })

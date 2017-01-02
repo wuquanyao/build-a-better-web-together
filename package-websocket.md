@@ -137,7 +137,7 @@ func main() {
 	iris.Static("/js", "./static/js", 1)
 
 	iris.Get("/", func(ctx *iris.Context) {
-		ctx.Render("client.html", clientPage{"Client Page", ctx.HostString()})
+		ctx.Render("client.html", clientPage{"Client Page", ctx.Host()})
 	})
 
 	// the path at which the websocket client should register itself to

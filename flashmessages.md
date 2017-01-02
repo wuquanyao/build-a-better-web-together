@@ -57,7 +57,7 @@ func main() {
 
 		name := c.Session().GetFlashString("name")
 		if name =="" {
-			c.Write("name not found")
+			c.Writef("name not found")
 			return
 		}
 
