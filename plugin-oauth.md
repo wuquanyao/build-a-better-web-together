@@ -294,7 +294,7 @@ func main() {
 
 	iris.Get("/auth/:provider/callback", func(ctx *iris.Context) {
 
-		user, err := gothictx.CompleteUserAuth(ctx)
+		user, err := gothic.CompleteUserAuth(ctx)
 		if err != nil {
 			ctx.SetStatusCode(iris.StatusUnauthorized)
 			ctx.Writef(err.Error())
@@ -306,7 +306,7 @@ func main() {
 	})
 
 	iris.Get("/auth/:provider", func(ctx *iris.Context) {
-		err := gothictx.BeginAuthHandler(ctx)
+		err := gothic.BeginAuthHandler(ctx)
 		if err != nil {
 			ctx.Log(err.Error())
 		}
