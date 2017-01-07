@@ -16,6 +16,8 @@ HandlerFuncs shoud have this function signature:
 ```go
 func handlerFunc(c *iris.Context)  {
     c.Writef("Hello")
+func handlerFunc(ctx *iris.Context)  {
+    ctx.Writef("Hello")
 }
 
 iris.HandleFunc("GET","/letsgetit",handlerFunc)

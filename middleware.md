@@ -14,7 +14,7 @@ iris.UseFunc(func(ctx *iris.Context){})
 iris.DoneFunc(executeLast)
 
 // Now declare routes
-iris.Get("/myroute", func(c *iris.Context) {
+iris.Get("/myroute", func(ctx *iris.Context) {
     // do stuff
 })
 iris.Get("/secondroute", myMiddlewareFunc, myRouteHandlerfunc)
@@ -58,21 +58,21 @@ Handler middleware example:
 
 type myMiddleware struct {}
 
-func (m myMiddleware) Serve(c *iris.Context){
+func (m myMiddleware) Serve(ctx *iris.Context){
     shouldContinueToTheNextHandler := true
 
     if shouldContinueToTheNextHandler {
-        c.Next()
+        ctx.Next()
     }else{
-        c.Text(403,"Forbidden !!")
+        ctx.Text(403,"Forbidden !!")
     }
 
 }
 
 iris.Use(&myMiddleware{})
 
-iris.Get("/home", func (c *iris.Context){
-    c.HTML(iris.StatusOK,"<h1>Hello from /home </h1>")
+iris.Get("/home", func (ctx *iris.Context){
+    ctx.HTML(iris.StatusOK,"<h1>Hello from /home </h1>")
 })
 
 iris.Listen(":8080")
@@ -82,8 +82,8 @@ HandlerFunc middleware example:
 
 ```go
 
-func myMiddleware(c *iris.Context){
-    c.Next()
+func myMiddleware(ctx *iris.Context){
+    ctx.Next()
 }
 
 iris.UseFunc(myMiddleware)
@@ -94,17 +94,17 @@ HandlerFunc middleware for a specific route:
 
 ```go
 
-func mySecondMiddleware(c *iris.Context){
-    c.Next()
+func mySecondMiddleware(ctx *iris.Context){
+    ctx.Next()
 }
 
-iris.Get("/dashboard", func(c *iris.Context) {
+iris.Get("/dashboard", func(ctx *iris.Context) {
     loggedIn := true
     if loggedIn {
-        c.Next()
+        ctx.Next()
     }
-}, mySecondMiddleware, func (c *iris.Context){
-    c.Writef("The last HandlerFunc is the main handler, everything before that is middleware for this route /dashboard")
+}, mySecondMiddleware, func (ctx *iris.Context){
+    ctx.Writef("The last HandlerFunc is the main handler, everything before that is middleware for this route /dashboard")
 })
 
 iris.Listen(":8080")
@@ -129,8 +129,8 @@ type Page struct {
 
 iris.Use(logger.New())
 
-iris.Get("/", func(c *iris.Context) {
-    c.Render("index.html", Page{"My Index Title"})
+iris.Get("/", func(ctx *iris.Context) {
+    ctx.Render("index.html", Page{"My Index Title"})
 })
 
 iris.Listen(":8080")

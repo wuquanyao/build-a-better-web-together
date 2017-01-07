@@ -20,14 +20,14 @@ import "github.com/kataras/iris"
 // 1.
 func firstWay() {
 
-    iris.Get("/home",func(c *iris.Context){})
+    iris.Get("/home",func(ctx *iris.Context){})
     iris.Listen(":8080")
 }
 // 2.
 func secondWay() {
 
     api := iris.New()
-    api.Get("/home",func(c *iris.Context){})
+    api.Get("/home",func(ctx *iris.Context){})
     api.Listen(":8080")
 }
 
@@ -46,7 +46,7 @@ func forthWay() {
     api := iris.New()
     api.Set(iris.OptionCharset("UTF-8"))
 
-    api.Get("/home",func(c *iris.Context){})
+    api.Get("/home",func(ctx *iris.Context){})
     api.Listen(":8080")
 }
 

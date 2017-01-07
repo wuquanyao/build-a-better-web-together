@@ -17,8 +17,8 @@ import (
 
 func main() {
 	api := iris.New()
-	api.Get("/", func(c *iris.Context) {
-		c.Writef("Welcome to the home page!")
+	api.Get("/", func(ctx *iris.Context) {
+		ctx.Writef("Welcome to the home page!")
 	})
 
 	graceful.Run(":3001", time.Duration(10)*time.Second, api)

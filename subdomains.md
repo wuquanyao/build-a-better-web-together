@@ -25,27 +25,37 @@ func main() {
         // admin.mydomain.com
         admin.Get("/", func(c *iris.Context) {
             c.Writef("INDEX FROM admin.mydomain.com")
+        admin.Get("/", func(ctx *iris.Context) {
+            ctx.Writef("INDEX FROM admin.mydomain.com")
         })
 
         // admin.mydomain.com/hey
         admin.Get("/hey", func(c *iris.Context) {
             c.Writef("HEY FROM admin.mydomain.com/hey")
+        admin.Get("/hey", func(ctx *iris.Context) {
+            ctx.Writef("HEY FROM admin.mydomain.com/hey")
         })
 
         // admin.mydomain.com/hey2
         admin.Get("/hey2", func(c *iris.Context) {
             c.Writef("HEY SECOND FROM admin.mydomain.com/hey")
+        admin.Get("/hey2", func(ctx *iris.Context) {
+            ctx.Writef("HEY SECOND FROM admin.mydomain.com/hey")
         })
     }
 
     // mydomain.com/
     api.Get("/", func(c *iris.Context) {
         c.Writef("INDEX FROM no-subdomain hey")
+    api.Get("/", func(ctx *iris.Context) {
+        ctx.Writef("INDEX FROM no-subdomain hey")
     })
 
     // mydomain.com/hey
     api.Get("/hey", func(c *iris.Context) {
         c.Writef("HEY FROM no-subdomain hey")
+    api.Get("/hey", func(ctx *iris.Context) {
+        ctx.Writef("HEY FROM no-subdomain hey")
     })
 
     api.Listen("mydomain.com:80")
@@ -79,16 +89,22 @@ func main() {
             // admin.mydomain.com
             admin.Get("/", func(c *iris.Context) {
                 c.Writef("INDEX FROM admin.mydomain.com")
+            admin.Get("/", func(ctx *iris.Context) {
+                ctx.Writef("INDEX FROM admin.mydomain.com")
             })
 
             // admin.mydomain.com/hey
             admin.Get("/hey", func(c *iris.Context) {
                 c.Writef("HEY FROM admin.mydomain.com/hey")
+            admin.Get("/hey", func(ctx *iris.Context) {
+                ctx.Writef("HEY FROM admin.mydomain.com/hey")
             })
 
             // admin.mydomain.com/hey2
             admin.Get("/hey2", func(c *iris.Context) {
                 c.Writef("HEY SECOND FROM admin.mydomain.com/hey")
+            admin.Get("/hey2", func(ctx *iris.Context) {
+                ctx.Writef("HEY SECOND FROM admin.mydomain.com/hey")
             })
         }
     */

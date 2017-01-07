@@ -34,25 +34,25 @@ import (
 func main() {
 	// Matches /hello/iris,  (if PathCorrection:true match also /hello/iris/)
 	// Doesn't match /hello or /hello/ or /hello/iris/something
-	iris.Get("/hello/:name", func(c *iris.Context) {
+	iris.Get("/hello/:name", func(ctx *iris.Context) {
 		// Retrieve the parameter name
-		name := c.Param("name")
-		c.Writef("Hello %s", name)
+		name := ctx.Param("name")
+		ctx.Writef("Hello %s", name)
 	})
 
 	// Matches /profile/iris/friends/1, (if PathCorrection:true match also /profile/iris/friends/1/)
 	// Doesn't match /profile/ or /profile/iris
 	// Doesn't match /profile/iris/friends or  /profile/iris/friends
 	// Doesn't match /profile/iris/friends/2/something
-	iris.Get("/profile/:fullname/friends/:friendID", func(c *iris.Context) {
+	iris.Get("/profile/:fullname/friends/:friendID", func(ctx *iris.Context) {
 		// Retrieve the parameters fullname and friendID
-		fullname := c.Param("fullname")
-		friendID, err := c.ParamInt("friendID")
+		fullname := ctx.Param("fullname")
+		friendID, err := ctx.ParamInt("friendID")
 		if err != nil {
 			// Do something with the error
 			return
 		}
-		c.HTML(iris.StatusOK, "<b> Hello </b>"+fullname+"<b> with friends ID </b>"+strconv.Itoa(friendID))
+		ctx.HTML(iris.StatusOK, "<b> Hello </b>"+fullname+"<b> with friends ID </b>"+strconv.Itoa(friendID))
 	})
 
 	// Route Example:
@@ -81,7 +81,7 @@ func main() {
 ```go
 // Will match any request which's url prefix is "/anything/" and has content after that
 // Matches /anything/whateverhere/whateveragain or /anything/blablabla
-// c.Param("randomName") will be /whateverhere/whateveragain, blablabla
+// ctx.Param("randomName") will be /whateverhere/whateveragain, blablabla
 // Doesn't match /anything or /anything/ or /something
-iris.Get("/anything/*randomName", func(c *iris.Context) { } )
+iris.Get("/anything/*randomName", func(ctx *iris.Context) { } )
 ```

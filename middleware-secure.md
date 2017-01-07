@@ -85,8 +85,8 @@ func main() {
 
     iris.Use(s)
 
-    iris.Get("/home", func(c *iris.Context) {
-        c.Writef("Hello from /home")
+    iris.Get("/home", func(ctx *iris.Context) {
+        ctx.Writef("Hello from /home")
     })
 
     iris.Listen(":8080")

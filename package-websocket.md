@@ -149,21 +149,28 @@ func main() {
 	iris.Websocket.OnConnection(func(c iris.WebsocketConnection) {
 
 		c.Join(myChatRoom)
+		ctx.Join(myChatRoom)
 
 		c.On("chat", func(message string) {
+		ctx.On("chat", func(message string) {
 			// to all except this connection ->
 			//c.To(iris.Broadcast).Emit("chat", "Message from: "+c.ID()+"-> "+message)
+			//ctx.To(iris.Broadcast).Emit("chat", "Message from: "+ctx.ID()+"-> "+message)
 
 			// to the client ->
 			//c.Emit("chat", "Message from myself: "+message)
+			//ctx.Emit("chat", "Message from myself: "+message)
 
 			// send the message to the whole room,
 			// all connections which are inside this room will receive this message
 			c.To(myChatRoom).Emit("chat", "From: "+c.ID()+": "+message)
+			ctx.To(myChatRoom).Emit("chat", "From: "+ctx.ID()+": "+message)
 		})
 
 		c.OnDisconnect(func() {
 			fmt.Printf("\nConnection with ID: %s has been disconnected!", c.ID())
+		ctx.OnDisconnect(func() {
+			fmt.Printf("\nConnection with ID: %s has been disconnected!", ctx.ID())
 		})
 	})
 
