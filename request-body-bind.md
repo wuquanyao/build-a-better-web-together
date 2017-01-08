@@ -83,8 +83,8 @@ type Company struct {
    Employees  int64
 }
 
-func MyHandler(c *iris.Context) {
-  if err := c.ReadJSON(&Company{}); err != nil {
+func MyHandler(ctx *iris.Context) {
+  if err := ctx.ReadJSON(&Company{}); err != nil {
   	panic(err.Error())
   }
 }
@@ -120,8 +120,8 @@ type Company struct {
    Employees  int64
 }
 
-func MyHandler(c *iris.Context) {  
-  if err := c.ReadXML(&Company{}); err != nil {
+func MyHandler(ctx *iris.Context) {  
+  if err := ctx.ReadXML(&Company{}); err != nil {
   	panic(err.Error())
   }
 }
@@ -284,12 +284,12 @@ type Company struct {
   Interface interface{}
 }
 
-func MyHandler(c *iris.Context) {
+func MyHandler(ctx *iris.Context) {
   m := Company{
       Interface: &InterfaceStruct{},
   }
 
-  if err := c.ReadForm(&m); err != nil {
+  if err := ctx.ReadForm(&m); err != nil {
   		panic(err.Error())
   }
 }

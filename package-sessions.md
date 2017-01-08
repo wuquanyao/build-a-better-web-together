@@ -60,42 +60,42 @@ func main() {
 	// defaults to false
 	DisableSubdomainPersistence bool
 
-	iris.Get("/", func(c *iris.Context) {
-		c.Writef("You should navigate to the /set, /get, /delete, /clear,/destroy instead")
+	iris.Get("/", func(ctx *iris.Context) {
+		ctx.Writef("You should navigate to the /set, /get, /delete, /clear,/destroy instead")
 	})
 
-	iris.Get("/set", func(c *iris.Context) {
+	iris.Get("/set", func(ctx *iris.Context) {
 
 		//set session values
-		c.Session().Set("name", "iris")
+		ctx.Session().Set("name", "iris")
 
 		//test if setted here
-		c.Writef("All ok session setted to: %s", c.Session().GetString("name"))
+		ctx.Writef("All ok session setted to: %s", ctx.Session().GetString("name"))
 	})
 
-	iris.Get("/get", func(c *iris.Context) {
+	iris.Get("/get", func(ctx *iris.Context) {
 		// get a specific key as a string.
 		// returns an empty string if the key was not found.
-		name := c.Session().GetString("name")
+		name := ctx.Session().GetString("name")
 
-		c.Writef("The name on the /set was: %s", name)
+		ctx.Writef("The name on the /set was: %s", name)
 	})
 
-	iris.Get("/delete", func(c *iris.Context) {
+	iris.Get("/delete", func(ctx *iris.Context) {
 		// delete a specific key
-		c.Session().Delete("name")
+		ctx.Session().Delete("name")
 	})
 
-	iris.Get("/clear", func(c *iris.Context) {
+	iris.Get("/clear", func(ctx *iris.Context) {
 		// removes all entries
-		c.Session().Clear()
+		ctx.Session().Clear()
 	})
 
-	iris.Get("/destroy", func(c *iris.Context) {
+	iris.Get("/destroy", func(ctx *iris.Context) {
 		// destroy/removes the entire session and cookie
-		c.SessionDestroy()
-		c.Log("You have to refresh the page to completely remove the session (on browsers), so the name should NOT be empty NOW, is it?\n ame: %s\n\nAlso check your cookies in your browser's cookies, should be no field for localhost/127.0.0.1 (or whatever you use)", c.Session().GetString("name"))
-		c.Writef("You have to refresh the page to completely remove the session (on browsers), so the name should NOT be empty NOW, is it?\nName: %s\n\nAlso check your cookies in your browser's cookies, should be no field for localhost/127.0.0.1 (or whatever you use)", c.Session().GetString("name"))
+		ctx.SessionDestroy()
+		ctx.Log("You have to refresh the page to completely remove the session (on browsers), so the name should NOT be empty NOW, is it?\n ame: %s\n\nAlso check your cookies in your browser's cookies, should be no field for localhost/127.0.0.1 (or whatever you use)", ctx.Session().GetString("name"))
+		ctx.Writef("You have to refresh the page to completely remove the session (on browsers), so the name should NOT be empty NOW, is it?\nName: %s\n\nAlso check your cookies in your browser's cookies, should be no field for localhost/127.0.0.1 (or whatever you use)", ctx.Session().GetString("name"))
 	})
 
 	iris.Listen(":8080")
@@ -129,38 +129,38 @@ func main() {
 
 	iris.UseSessionDB(db)
 
-	iris.Get("/set", func(c *iris.Context) {
+	iris.Get("/set", func(ctx *iris.Context) {
 
 		// set session values
-		c.Session().Set("name", "iris")
+		ctx.Session().Set("name", "iris")
 
 		// test if set here
-		c.Writef("All ok session set to: %s", c.Session().GetString("name"))
+		ctx.Writef("All ok session set to: %s", ctx.Session().GetString("name"))
 	})
 
-	iris.Get("/get", func(c *iris.Context) {
+	iris.Get("/get", func(ctx *iris.Context) {
 		// get a specific key as a string.
 		// returns an empty string if the key was not found.
-		name := c.Session().GetString("name")
+		name := ctx.Session().GetString("name")
 
-		c.Writef("The name on the /set was: %s", name)
+		ctx.Writef("The name on the /set was: %s", name)
 	})
 
-	iris.Get("/delete", func(c *iris.Context) {
+	iris.Get("/delete", func(ctx *iris.Context) {
 		// delete a specific key
-		c.Session().Delete("name")
+		ctx.Session().Delete("name")
 	})
 
-	iris.Get("/clear", func(c *iris.Context) {
+	iris.Get("/clear", func(ctx *iris.Context) {
 		// removes all entries
-		c.Session().Clear()
+		ctx.Session().Clear()
 	})
 
-	iris.Get("/destroy", func(c *iris.Context) {
+	iris.Get("/destroy", func(ctx *iris.Context) {
 		// destroy/removes the entire session and cookie
-		c.SessionDestroy()
-		c.Log("You have to refresh the page to completely remove the session (on browsers), so the name should NOT be empty NOW, is it?\n ame: %s\n\nAlso check your cookies in your browser's cookies, should be no field for localhost/127.0.0.1 (or what ever you use)", c.Session().GetString("name"))
-		c.Writef("You have to refresh the page to completely remove the session (on browsers), so the name should NOT be empty NOW, is it?\nName: %s\n\nAlso check your cookies in your browser's cookies, should be no field for localhost/127.0.0.1 (or what ever you use)", c.Session().GetString("name"))
+		ctx.SessionDestroy()
+		ctx.Log("You have to refresh the page to completely remove the session (on browsers), so the name should NOT be empty NOW, is it?\n ame: %s\n\nAlso check your cookies in your browser's cookies, should be no field for localhost/127.0.0.1 (or what ever you use)", ctx.Session().GetString("name"))
+		ctx.Writef("You have to refresh the page to completely remove the session (on browsers), so the name should NOT be empty NOW, is it?\nName: %s\n\nAlso check your cookies in your browser's cookies, should be no field for localhost/127.0.0.1 (or what ever you use)", ctx.Session().GetString("name"))
 	})
 
 	iris.Listen(":8080")

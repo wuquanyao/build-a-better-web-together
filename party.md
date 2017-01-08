@@ -15,31 +15,31 @@ func main() {
 		})
     {
         // add a silly middleware
-        admin.UseFunc(func(c *iris.Context) {
+        admin.UseFunc(func(ctx *iris.Context) {
             //your authentication logic here...
-            println("from ", c.Path())
+            println("from ", ctx.Path())
             authorized := true
             if authorized {
-                c.Next()
+                ctx.Next()
             } else {
-                c.Text(401, c.Path()+" is not authorized for you")
+                ctx.Text(401, ctx.Path()+" is not authorized for you")
             }
 
         })
-        admin.Get("/", func(c *iris.Context) {
-            c.Writef("from /admin/ or /admin if you pathcorrection on")
+        admin.Get("/", func(ctx *iris.Context) {
+            ctx.Writef("from /admin/ or /admin if you pathcorrection on")
         })
-        admin.Get("/dashboard", func(c *iris.Context) {
-            c.Writef("/admin/dashboard")
+        admin.Get("/dashboard", func(ctx *iris.Context) {
+            ctx.Writef("/admin/dashboard")
         })
-        admin.Delete("/delete/:userId", func(c *iris.Context) {
-            c.Writef("admin/delete/%s", c.Param("userId"))
+        admin.Delete("/delete/:userId", func(ctx *iris.Context) {
+            ctx.Writef("admin/delete/%s", ctx.Param("userId"))
         })
     }
 
 
     beta := admin.Party("/beta")
-    beta.Get("/hey", func(c *iris.Context) { c.Writef("hey from /admin/beta/hey") })
+    beta.Get("/hey", func(ctx *iris.Context) { ctx.Writef("hey from /admin/beta/hey") })
 
     iris.Listen(":8080")
 }

@@ -68,7 +68,7 @@ func main() {
 
     iris.Use(crs) // register the middleware
 
-    iris.Get("/home", func(c *iris.Context) {
+    iris.Get("/home", func(ctx *iris.Context) {
         // ...
     })
 

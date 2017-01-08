@@ -24,21 +24,21 @@ VisitAllCookies(visitor func(key string, value string))
 How to use:
 ```go
 
-iris.Get("/set", func(c *iris.Context){
-    c.SetCookieKV("name","iris")
-    c.Writef("Cookie has been setted.")
+iris.Get("/set", func(ctx *iris.Context){
+    ctx.SetCookieKV("name","iris")
+    ctx.Writef("Cookie has been setted.")
 })
 
-iris.Get("/get", func(c *iris.Context){
-    name := c.GetCookie("name")
-    c.Writef("Cookie's value: %s", name)
+iris.Get("/get", func(ctx *iris.Context){
+    name := ctx.GetCookie("name")
+    ctx.Writef("Cookie's value: %s", name)
 })
 
-iris.Get("/remove", func(c *iris.Context){
-    if name := c.GetCookie("name"); name != "" {
-       c.RemoveCookie("name")  
+iris.Get("/remove", func(ctx *iris.Context){
+    if name := ctx.GetCookie("name"); name != "" {
+       ctx.RemoveCookie("name")  
     }
-    c.Writef("Cookie has been removed.")
+    ctx.Writef("Cookie has been removed.")
 })
 
 ```

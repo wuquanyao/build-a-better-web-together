@@ -33,9 +33,9 @@ import "github.com/kataras/iris"
 
 func main() {
 
-    iris.Get("/servezip", func(c *iris.Context) {
+    iris.Get("/servezip", func(ctx *iris.Context) {
         file := "./files/first.zip"
-        c.SendFile(file, "saveAsName.zip")
+        ctx.SendFile(file, "saveAsName.zip")
     })
 
     iris.Listen(":8080")
@@ -53,12 +53,12 @@ import "github.com/kataras/iris"
 
 func main() {
 
-    iris.Get("/servezip", func(c *iris.Context) {
+    iris.Get("/servezip", func(ctx *iris.Context) {
         // read your file or anything
         var binary data[]
-        c.Data(iris.StatusOK, data)
+        ctx.Data(iris.StatusOK, data)
 
-        // or c.Write(data)
+        // or ctx.Write(data)
     })
 
     iris.Listen(":8080")

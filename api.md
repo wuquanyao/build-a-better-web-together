@@ -23,10 +23,10 @@ func main() {
     iris.Listen(":8080")
 }
 
-func testGet(c *iris.Context) {
+func testGet(ctx *iris.Context) {
     //...
 }
-func testPost(c *iris.Context) {
+func testPost(ctx *iris.Context) {
     //...
 }
 
