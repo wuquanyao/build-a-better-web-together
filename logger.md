@@ -1,8 +1,20 @@
 # Logger
+Logs every incoming http requests.
 
-[This is a middleware](https://github.com/iris-contrib/middleware/tree/master/logger)
 
-Logs the incoming requests
+We have two loggers, same job & how-to-use code but different style of output:
+
+- [This is the logger middleware using the log.Logger](https://github.com/iris-contrib/middleware/tree/master/logger)
+
+```sh
+$ go get github.com/iris-contrib/middleware/logger
+```
+
+- [This is the logger middleware using the zap structured logger](https://github.com/iris-contrib/middleware/tree/master/loggerzap)
+
+```sh
+$ go get github.com/iris-contrib/middleware/loggerzap
+```
 
 ```go
  New(config ...Config) iris.HandlerFunc
@@ -16,6 +28,8 @@ package main
 import (
 	"github.com/kataras/iris"
 	"github.com/iris-contrib/middleware/logger"
+	// or logger "github.com/iris-contrib/middleware/loggerzap"
+	// the rest code should be identical.
 )
 
 /*
