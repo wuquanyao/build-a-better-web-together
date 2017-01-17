@@ -1,6 +1,6 @@
 # Basic Authentication
 
-This is a [middleware](https://github.com/iris-contrib/middleware/tree/master/basicuath).
+This is a [middleware](https://github.com/iris-contrib/middleware/tree/master/basicauth).
 
 HTTP Basic authentication (BA) implementation is the simplest technique for enforcing access controls to web resources because it doesn't require cookies, session identifiers, or login pages; rather, HTTP Basic authentication uses standard fields in the HTTP header, obviating the need for handshakes. Read [more](https://en.wikipedia.org/wiki/Basic_access_authentication).
 
