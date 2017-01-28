@@ -6,7 +6,7 @@ Iris provides two ways for configuring your Cors, one is by [middleware](https:/
 The difference is that the 
 - `cors plugin` is a wrapper which wraps the whole `iris.Router`. 
 - `cors plugin` cannot be registered per-route, only per-application.
-- `cors plugin` has all the options that the [rs/cors](https://github.com/rs/cors] middleware can accept.
+- `cors plugin` has all the options that the [rs/cors](https://github.com/rs/cors) middleware can accept.
 
 
 - `cors middleware` is just an `iris.HandlerFunc` which can be registered per-route.
