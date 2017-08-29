@@ -1,26 +1,9 @@
-# Install
+# Installation
 
-The only requirement is the [Go Programming Language](https://golang.org/dl), at least v1.7.
+The only requirement is the [Go Programming Language](https://golang.org/dl/), at least version 1.8 but **1.9** is highly recommended.
 
 ```sh
-$ go get -u github.com/kataras/iris/iris
+$ go get -u github.com/kataras/iris
 ```
 
-this will update the dependencies also.
-
-* If you are connected to the internet through **China**, according to [this](https://github.com/kataras/iris/issues/98), you might have problems installing Iris.   
-  **Follow the below steps**:
-
-1. [https:\/\/github.com\/northbright\/Notes\/blob\/master\/Golang\/china\/get-golang-packages-on-golang-org-in-china.md](https://github.com/northbright/Notes/blob/master/Golang/china/get-golang-packages-on-golang-org-in-china.md)
-
-1. `$ go get github.com/kataras/iris/iris` **without -u**
-
-* If you have any problems installing Iris, just delete the directory `$GOPATH/src/github.com/kataras/iris` , open your shell and run `go get -u github.com/kataras/iris/iris` .
-
-
-
-
-> NOTE: **If you want the fasthttp version of iris **, then install [v5](https://github.com/kataras/iris/tree/5.0.0) instead, its [examples](https://github.com/iris-contrib/examples/tree/5.0.0), [book](https://docs-v5.iris-go.com), [middleware](https://github.com/iris-contrib/middleware/tree/5.0.0) and [plugins](https://github.com/iris-contrib/plugin/tree/5.0.0) are expecting an import path of:
-```
-gopkg.in/kataras/iris.v5
-```
+> _iris_ takes advantage of the [vendor directory](https://docs.google.com/document/d/1Bz5-UB7g2uPBdOx-rw5t9MxJwkfpx90cqG9AFL0JAYo) feature. You get truly reproducible builds, as this method guards against upstream renames and deletes.

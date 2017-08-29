@@ -1,8 +1,6 @@
 # Versioning
 
-Current: **v6.0.0**
-
-Older: **[v5/fasthttp](https://github.com/kataras/iris/tree/5.0.0)**
+Current: **v8.4.0**
 
 Read more about Semantic Versioning 2.0.0
 

@@ -1,18 +1,20 @@
 # API
 
-**Use of GET,  POST,  PUT,  DELETE, HEAD, PATCH & OPTIONS**
+**Use of GET, POST, PUT, DELETE, HEAD, PATCH, OPTIONS, CONNECT & TRACE**
 
 ```go
 package main
 
 import "github.com/kataras/iris"
 
+
 func main() {
+    app := iris.New()
     // declare the routes
-    iris.Get("/home", testGet)
-    iris.Post("/login", testPost)
-    iris.Put("/add", testPut)
-    iris.Delete("/remove", testDelete)
+    app.Get("/home", testGet)
+    app.Post("/login", testPost)
+    app.Put("/add", testPut)
+    app.Delete("/remove", testDelete)
     iris.Head("/testHead", testHead)
     iris.Patch("/testPatch", testPatch)
     iris.Options("/testOptions", testOptions)
@@ -20,16 +22,15 @@ func main() {
     iris.Trace("/testTrace", testTrace)
 
     // start the server
-    iris.Listen(":8080")
+    app.Run(iris.Addr(":8080"))
 }
 
-func testGet(ctx *iris.Context) {
-    //...
+func testGet(ctx iris.Context) {
+    // [...]
 }
-func testPost(ctx *iris.Context) {
-    //...
+func testPost(ctx iris.Context) {
+    // [...]
 }
 
-//and so on....
+// and so on....
 ```
-

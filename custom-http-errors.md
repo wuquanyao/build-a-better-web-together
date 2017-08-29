@@ -5,35 +5,29 @@ You can define your own handlers when http error occurs.
 ```go
 package main
 
-import (
-	"github.com/kataras/iris"
-)
+import "github.com/kataras/iris"
+
 
 func main() {
+	app := iris.New()
 
-	iris.OnError(iris.StatusInternalServerError, func(ctx *iris.Context) {
-        ctx.Writef("CUSTOM 500 INTERNAL SERVER ERROR PAGE")
-		// or ctx.Render, ctx.HTML any render method you want
-		ctx.Log("http status: 500 happened!")
+	app.OnErrorCode(iris.StatusInternalServerError, func(ctx iris.Context) {
+		ctx.HTML("Message: <b>" + ctx.Values().GetString("message") + "</b>")
 	})
 
-	iris.OnError(iris.StatusNotFound, func(ctx *iris.Context) {
-		ctx.Writef("CUSTOM 404 NOT FOUND ERROR PAGE")
-		ctx.Log("http status: 404 happened!")
+	app.Get("/", func(ctx iris.Context) {
+		ctx.HTML(`Click <a href="/my500">here</a> to fire the 500 status code`)
 	})
 
-	// emit the errors to test them
-	iris.Get("/500", func(ctx *iris.Context) {
-		ctx.EmitError(iris.StatusInternalServerError) // ctx.Panic()
+	app.Get("/my500", func(ctx iris.Context) {
+		ctx.Values().Set("message", "this is the error message")
+		ctx.StatusCode(500)
 	})
 
-	iris.Get("/404", func(ctx *iris.Context) {
-		ctx.EmitError(iris.StatusNotFound) // ctx.NotFound()
+	app.Get("/u/{firstname:alphabetical}", func(ctx iris.Context) {
+		ctx.Writef("Hello %s", ctx.Params().Get("firstname"))
 	})
 
-	iris.Listen(":80")
-
+	app.Run(iris.Addr(":8080"))
 }
-
-
 ```
