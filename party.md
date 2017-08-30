@@ -9,10 +9,10 @@ import "github.com/kataras/iris"
 
 func main() {
     admin := iris.Party("/admin",
-	    func(ctx *iris.Context){
-     	   ctx.Writef("Middleware for all party's routes!")
-		   ctx.Next();
-		})
+        func(ctx *iris.Context){
+            ctx.Writef("Middleware for all party's routes!")
+           ctx.Next();
+        })
     {
         // add a silly middleware
         admin.UseFunc(func(ctx *iris.Context) {
@@ -44,3 +44,6 @@ func main() {
     iris.Listen(":8080")
 }
 ```
+
+
+
