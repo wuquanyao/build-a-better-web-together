@@ -32,17 +32,88 @@ if err != nil {
 app.Run(iris.Listener(l))
 ```
 
-```go
-// UNIX socket
-l, err := netutil.UNIX("/tmpl/srv.sock", 0666)
-if err != nil {
-panic(err)
-}
+A more complete example, using the unix-only socket files feature 
 
-app.Run(iris.Listener(l))
+```go
+package main
+
+import (
+    "os"
+    "net"
+
+    "github.com/kataras/iris"
+)
+
+func main() {
+    app := iris.New()
+
+    // UNIX socket
+    if errOs := os.Remove(socketFile); errOs != nil && !os.IsNotExist(errOs) {
+        app.Logger().Fatal(errOs)
+    }
+
+    l, err := net.Listen("unix", socketFile)
+
+    if err != nil {
+        app.Logger().Fatal(err)
+    }
+
+    if err = os.Chmod(socketFile, mode); err != nil {
+        app.Logger().Fatal(err)
+    }
+
+    app.Run(iris.Listener(l))
+}
 ```
 
-### Secure
+UNIX and BSD hosts can take advandage of the reuse port feature
+
+```go
+package main
+
+import (
+    // Package tcplisten provides customizable TCP net.Listener with various
+    // performance-related options:
+    //
+    //   - SO_REUSEPORT. This option allows linear scaling server performance
+    //     on multi-CPU servers.
+    //     See https://www.nginx.com/blog/socket-sharding-nginx-release-1-9-1/ for details.
+    //
+    //   - TCP_DEFER_ACCEPT. This option expects the server reads from the accepted
+    //     connection before writing to them.
+    //
+    //   - TCP_FASTOPEN. See https://lwn.net/Articles/508865/ for details.
+    "github.com/valyala/tcplisten"
+
+    "github.com/kataras/iris"
+)
+
+// go get github.com/valyala/tcplisten
+// go run main.go
+
+func main() {
+    app := iris.New()
+
+    app.Get("/", func(ctx iris.Context) {
+        ctx.HTML("<h1>Hello World!</h1>")
+    })
+
+    listenerCfg := tcplisten.Config{
+        ReusePort:   true,
+        DeferAccept: true,
+        FastOpen:    true,
+    }
+
+    l, err := listenerCfg.NewListener("tcp", ":8080")
+    if err != nil {
+        app.Logger().Fatal(err)
+    }
+
+    app.Run(iris.Listener(l))
+}
+```
+
+### HTTP/2 and Secure
 
 If you have signed file keys you can use the `iris.TLS` to serve `https` based on those certification keys
 
@@ -69,7 +140,6 @@ There may be times that you want something very special to listen on, which is n
 // ListenAndServe function of the `net/http` package.
 app.Run(iris.Raw(&http.Server{Addr:":8080"}).ListenAndServe)
 ```
-
 
 ## Host configurators
 
@@ -99,7 +169,28 @@ app.ConfigureHost(func(h *iris.Supervisor) {
 app.Run(iris.Addr(":8080"))
 ```
 
-> You can get the running hosts via the `app.Hosts` field note that **this is filled after the app.Run method**.
+Access to all hosts that serve your application can be provided by
+the `Application#Hosts` field, after the `Run` method.
+
+But the most common scenario is that you may need access to the host before the `app.Run` method,
+there are two ways of gain access to the host supervisor, read below.
+
+We have already saw how to configure all application's hosts by second argument of `app.Run` or `app.ConfigureHost`. There is one more way which suits better for simple scenarios and that is to use the `app.NewHost` to create a new host
+and use one of its `Serve` or `Listen` functions
+to start the application via the `iris#Raw` Runner.
+
+Note that this way needs an extra import of the `net/http` package.
+
+Example Code:
+
+```go
+h := app.NewHost(&http.Server{Addr:":8080"})
+h.RegisterOnShutdown(func(){
+    println("server terminated")
+})
+
+app.Run(iris.Raw(h.ListenAndServe))
+```
 
 ## Multi hosts
 
@@ -114,4 +205,47 @@ go app.Run(iris.Addr(":8080"))
 // start a second server which is listening on tcp 0.0.0.0:9090,
 // without "go" keyword because we want to block at the last server-run.
 app.NewHost(&http.Server{Addr:":9090"}).ListenAndServe()
+```
+
+## Shutdown (Gracefully)
+
+Let's continue by learning how to catch CONTROL+C/COMMAND+C or unix kill command and shutdown the server gracefully.
+
+> Gracefully Shutdown on CONTROL+C/COMMAND+C or when kill command sent is ENABLED BY-DEFAULT.
+
+In order to manually manage what to do when app is interrupted,
+we have to disable the default behavior with the option `WithoutInterruptHandler`
+and register a new interrupt handler (globally, across all possible hosts).
+
+
+Example code:
+
+```go
+package main
+
+import (
+    "context"
+    "time"
+
+    "github.com/kataras/iris"
+)
+
+
+func main() {
+    app := iris.New()
+
+    iris.RegisterOnInterrupt(func() {
+        timeout := 5 * time.Second
+        ctx, cancel := context.WithTimeout(context.Background(), timeout)
+        defer cancel()
+        // close all hosts
+        app.Shutdown(ctx)
+    })
+
+    app.Get("/", func(ctx iris.Context) {
+        ctx.HTML(" <h1>hi, I just exist in order to see if the server is closed</h1>")
+    })
+
+    app.Run(iris.Addr(":8080"), iris.WithoutInterruptHandler)
+}
 ```
