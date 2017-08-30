@@ -47,7 +47,8 @@ func main() {
 The same for the `kataras/iris/core/router/APIBuilder#PartyFunc`
 
 ```go
-app.PartyFunc("/cpanel", func(child iris.Party) { // instead of importing the router package and use router.Party
+// instead of importing the router package and use router.Party
+app.PartyFunc("/cpanel", func(child iris.Party) { 
     child.Get("/", func(ctx iris.Context){})
 }
 // OR 
