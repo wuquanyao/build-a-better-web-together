@@ -51,10 +51,7 @@ The same for the `kataras/iris/core/router/APIBuilder#PartyFunc`
 app.PartyFunc("/cpanel", func(child iris.Party) { 
     child.Get("/", func(ctx iris.Context){})
 }
-// OR 
+// OR
 cpanel := app.Party("/cpanel")
 cpanel.Get("/", func(ctx iris.Context){})
 ```
-
-
-
