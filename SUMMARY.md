@@ -6,10 +6,12 @@ Navigate to the https://github.com/iris-contrib/examples instead.
 ## Table of Contents
 
 * [Introduction](README.md)
-    * [Why new web framework](why.md)
+    * [Why a new web framework?](why.md)
 * [Features](features.md)
 * [Versioning](versioning.md)
 * [Installation](installation.md)
 * [Overview](overview.md)
-* [Handlers](handlers.md)
+* [Routing](routing.md)
+    * [Handlers](handlers.md)
+    * [Reverse routes](routing_reverse.md)
 * [Examples](https://github.com/iris-contrib/examples)
