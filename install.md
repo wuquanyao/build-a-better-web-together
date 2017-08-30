@@ -10,7 +10,7 @@ $ go get -u github.com/kataras/iris
 
 Q: What's the major difference between Go 1.8 and Go 1.9 Iris?
 
-A: Go 1.9 has support for **type alias** and Iris was ready for that from Go 1.8.3, it had a file, the `kataras/iris/context.go` with restrict build access to Go 1.9.
+A: Go 1.9 has support for **type alias** and Iris was ready for that from Go 1.8.3, it had a file, the [`kataras/iris/context.go`](https://github.com/kataras/iris/blob/master/context.go) with restrict build access to Go 1.9 that declares all the type alias for Iris, all in the same place.
 
 **Before** Go 1.9 you had to import the "github.com/kataras/iris/context" to create a Handler:
 
