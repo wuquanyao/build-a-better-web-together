@@ -9,6 +9,6 @@ Navigate to the https://github.com/iris-contrib/examples instead.
     * [Why](why.md)
 * [Features](features.md)
 * [Versioning](versioning.md)
-* [Install](install.md)
+* [Installation](installation.md)
 
 * [Examples](https://github.com/iris-contrib/examples)
