@@ -107,3 +107,5 @@ func (c *ExampleController) GetHello() {
     c.Ctx.JSON(iris.Map{"message": "Hello Iris!"})
 }
 ```
+
+> Learn more about [Iris MVC](mvc.md)
