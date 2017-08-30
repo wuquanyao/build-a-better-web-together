@@ -12,6 +12,7 @@
     * [Handlers](handlers.md)
     * [Reverse routes](routing_reverse.md)
 * [Error handlers](error_handlers.md)
+* [Hosts](hosts.md)
 * [Examples](https://github.com/iris-contrib/examples)
 
 > This book is not ready yet, we'll update it soon, check back later on. Navigate to the https://github.com/iris-contrib/examples instead.
