@@ -10,5 +10,4 @@ Navigate to the https://github.com/iris-contrib/examples instead.
 * [Features](features.md)
 * [Versioning](versioning.md)
 * [Installation](installation.md)
-
 * [Examples](https://github.com/iris-contrib/examples)
