@@ -26,4 +26,5 @@ type Handlers []Handler
 ```
 
 Once the handler is registered, we can use the returned [`Route`](https://godoc.org/github.com/kataras/iris/core/router#Route) instance to give a name to the handler registration for easier lookup in code or in templates.
-For more information, checkout the [Routing and reverse lookups](routing.md) section
+
+For more information, checkout the [Routing and reverse lookups](routing_reverse.md) section.

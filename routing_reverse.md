@@ -1,4 +1,4 @@
-# Routing
+# Routing and reverse lookups
 
 As mentioned in the [Handlers](handlers.md) chapter, Iris provides several handler registration methods, each of which returns a [`Route`](https://godoc.org/github.com/kataras/iris/core/router#Route) instance.
 
@@ -10,24 +10,24 @@ Route naming is easy, since we just call the returned `*Route` with a `Name` fie
 package main
 
 import (
-	"github.com/kataras/iris"
+    "github.com/kataras/iris"
 )
 
 func main() {
-	app := iris.New()
-	// define a function
-	h := func(ctx iris.Context) {
-		ctx.HTML("<b>Hi</b1>")
-	}
+    app := iris.New()
+    // define a function
+    h := func(ctx iris.Context) {
+        ctx.HTML("<b>Hi</b1>")
+    }
 
-	// handler registration and naming
-	home := app.Get("/", h)
-	home.Name = "home"
-	// or
-	app.Get("/about", h).Name = "about"
-	app.Get("/page/{id}", h).Name = "page"
+    // handler registration and naming
+    home := app.Get("/", h)
+    home.Name = "home"
+    // or
+    app.Get("/about", h).Name = "about"
+    app.Get("/page/{id}", h).Name = "page"
 
-	app.Run(iris.Addr(":8080"))
+    app.Run(iris.Addr(":8080"))
 }
 ```
 
@@ -35,7 +35,7 @@ func main() {
 
 When we register the handlers for a specific path, we get the ability to create URLs based on the structured data we pass to Iris. In the example above, we've named three routers, one of which even takes parameters. If we're using the default `html/template` view engine, we can use a simple action to reverse the routes (and generae actual URLs):
 
-```
+```sh
 Home: {{ urlpath "home" }}
 About: {{ urlpath "about" }}
 Page 17: {{ urlpath "page" "17" }}
@@ -43,7 +43,7 @@ Page 17: {{ urlpath "page" "17" }}
 
 Above code would generate the following output:
 
-```
+```sh
 Home: http://localhost:8080/ 
 About: http://localhost:8080/about
 Page 17: http://localhost:8080/page/17
@@ -60,4 +60,4 @@ We can use the following methods/functions to work with named routes (and their 
 
 ## Examples
 
-Check out the [`view/template_html_4`](https://github.com/kataras/iris/tree/master/_examples/view/template_html_4) example for more details.
+Check out the [kataras/iris/_examples/view/template_html_4](https://github.com/kataras/iris/tree/master/_examples/view/template_html_4) example for more details.

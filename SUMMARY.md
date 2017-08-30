@@ -11,4 +11,5 @@ Navigate to the https://github.com/iris-contrib/examples instead.
 * [Versioning](versioning.md)
 * [Installation](installation.md)
 * [Overview](overview.md)
+* [Handlers](handlers.md)
 * [Examples](https://github.com/iris-contrib/examples)
