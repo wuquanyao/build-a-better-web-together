@@ -76,9 +76,9 @@ app := iris.New()
 
 users := app.Party("/users", myAuthMiddlewareHandler)
 
-// http://myhost.com/users/42/profile
+// http://localhost:8080/users/42/profile
 users.Get("/{id:int}/profile", userProfileHandler)
-// http://myhost.com/users/messages/1
+// http://localhost:8080/users/messages/1
 users.Get("/inbox/{id:int}", userMessageHandler)
 ```
 
@@ -90,9 +90,9 @@ app := iris.New()
 app.PartyFunc("/users", func(users iris.Party) {
     users.Use(myAuthMiddlewareHandler)
 
-    // http://myhost.com/users/42/profile
+    // http://localhost:8080/users/42/profile
     users.Get("/{id:int}/profile", userProfileHandler)
-    // http://myhost.com/users/messages/1
+    // http://localhost:8080/users/messages/1
     users.Get("/inbox/{id:int}", userMessageHandler)
 })
 ```

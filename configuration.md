@@ -7,7 +7,7 @@ Configuration is useless before listen functions, so it should be passed on `App
 Iris has a type named `Configurator` which is a `func(*iris.Application)`, any function
 which completes this can be passed at `Application#Configure` and/or `Application#Run/2`.
 
-`Application#ConfigurationReadOnly` returns the configuration values.
+`Application#ConfigurationReadOnly()` returns the configuration values.
 
 `.Run` **by `Configuration` struct**
 
@@ -15,28 +15,28 @@ which completes this can be passed at `Application#Configure` and/or `Applicatio
 package main
 
 import (
-	"github.com/kataras/iris"
+    "github.com/kataras/iris"
 )
 
 func main() {
-	app := iris.New()
-	app.Get("/", func(ctx iris.Context) {
-		ctx.HTML("<b>Hello!</b>")
-	})
-	// [...]
+    app := iris.New()
+    app.Get("/", func(ctx iris.Context) {
+        ctx.HTML("<b>Hello!</b>")
+    })
+    // [...]
 
-	// Good when you want to modify the whole configuration.
-	app.Run(iris.Addr(":8080"), iris.WithConfiguration(iris.Configuration{
-		DisableStartupLog:                 false,
-		DisableInterruptHandler:           false,
-		DisablePathCorrection:             false,
-		EnablePathEscape:                  false,
-		FireMethodNotAllowed:              false,
-		DisableBodyConsumptionOnUnmarshal: false,
-		DisableAutoFireStatusCode:         false,
-		TimeFormat:                        "Mon, 02 Jan 2006 15:04:05 GMT",
-		Charset:                           "UTF-8",
-	}))
+    // Good when you want to modify the whole configuration.
+    app.Run(iris.Addr(":8080"), iris.WithConfiguration(iris.Configuration{
+        DisableStartupLog:                 false,
+        DisableInterruptHandler:           false,
+        DisablePathCorrection:             false,
+        EnablePathEscape:                  false,
+        FireMethodNotAllowed:              false,
+        DisableBodyConsumptionOnUnmarshal: false,
+        DisableAutoFireStatusCode:         false,
+        TimeFormat:                        "Mon, 02 Jan 2006 15:04:05 GMT",
+        Charset:                           "UTF-8",
+    }))
 }
 ```
 
@@ -46,25 +46,25 @@ func main() {
 package main
 
 import (
-	"github.com/kataras/iris"
+    "github.com/kataras/iris"
 )
 
 func main() {
-	app := iris.New()
-	app.Get("/", func(ctx iris.Context) {
-		ctx.HTML("<b>Hello!</b>")
-	})
-	// [...]
+    app := iris.New()
+    app.Get("/", func(ctx iris.Context) {
+        ctx.HTML("<b>Hello!</b>")
+    })
+    // [...]
 
-	// Good when you want to change some of the configuration's field.
-	// Prefix: "With", code editors will help you navigate through all
-	// configuration options without even a glitch to the documentation.
+    // Good when you want to change some of the configuration's field.
+    // Prefix: "With", code editors will help you navigate through all
+    // configuration options without even a glitch to the documentation.
 
-	app.Run(iris.Addr(":8080"), iris.WithoutStartupLog, iris.WithCharset("UTF-8"))
+    app.Run(iris.Addr(":8080"), iris.WithoutStartupLog, iris.WithCharset("UTF-8"))
 
-	// or before run:
-	// app.Configure(iris.WithoutStartupLog, iris.WithCharset("UTF-8"))
-	// app.Run(iris.Addr(":8080"))
+    // or before run:
+    // app.Configure(iris.WithoutStartupLog, iris.WithCharset("UTF-8"))
+    // app.Run(iris.Addr(":8080"))
 }
 ```
 
@@ -87,19 +87,19 @@ Charset = "UTF-8"
 package main
 
 import (
-	"github.com/kataras/iris"
+    "github.com/kataras/iris"
 )
 
 func main() {
-	app := iris.New()
+    app := iris.New()
 
-	app.Get("/", func(ctx iris.Context) {
-		ctx.HTML("<b>Hello!</b>")
-	})
-	// [...]
+    app.Get("/", func(ctx iris.Context) {
+        ctx.HTML("<b>Hello!</b>")
+    })
+    // [...]
 
-	// Good when you have two configurations, one for development and a different one for production use.
-	app.Run(iris.Addr(":8080"), iris.WithConfiguration(iris.TOML("./configs/iris.tml")))
+    // Good when you have two configurations, one for development and a different one for production use.
+    app.Run(iris.Addr(":8080"), iris.WithConfiguration(iris.TOML("./configs/iris.tml")))
 }
 ```
 
@@ -119,22 +119,22 @@ Charset: UTF-8
 package main
 
 import (
-	"github.com/kataras/iris"
+    "github.com/kataras/iris"
 )
 
 func main() {
-	app := iris.New()
-	app.Get("/", func(ctx iris.Context) {
-		ctx.HTML("<b>Hello!</b>")
-	})
-	// [...]
+    app := iris.New()
+    app.Get("/", func(ctx iris.Context) {
+        ctx.HTML("<b>Hello!</b>")
+    })
+    // [...]
 
-	app.Run(iris.Addr(":8080"), iris.WithConfiguration(iris.YAML("./configs/iris.yml")))
+    app.Run(iris.Addr(":8080"), iris.WithConfiguration(iris.YAML("./configs/iris.yml")))
 }
 
 ```
 
-### Some of the available settings are:
+## Built'n Configurators
 
 ```go
 // WithoutServerError will cause to ignore the matched "errors"
@@ -224,7 +224,7 @@ func WithoutRemoteAddrHeader(headerName string) Configurator
 func WithOtherValue(key string, val interface{}) Configurator
 ```
 
-## Configurator
+## Custom Configurator
 
 With the `Configurator` developers can modularize their applications with ease.
 
@@ -235,32 +235,32 @@ Example Code:
 package counter
 
 import (
-	"time"
+    "time"
 
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/core/host"
+    "github.com/kataras/iris"
+    "github.com/kataras/iris/core/host"
 )
 
 func Configurator(app *iris.Application) {
-	counterValue := 0
+    counterValue := 0
 
-	go func() {
-		ticker := time.NewTicker(time.Second)
+    go func() {
+        ticker := time.NewTicker(time.Second)
 
-		for range ticker.C {
-			counterValue++
-		}
+        for range ticker.C {
+            counterValue++
+        }
 
-		app.ConfigureHost(func(h *host.Supervisor) { // <- HERE: IMPORTANT
-			h.RegisterOnShutdown(func() {
-				ticker.Stop()
-			})
-		})
-	}()
+        app.ConfigureHost(func(h *host.Supervisor) { // <- HERE: IMPORTANT
+            h.RegisterOnShutdown(func() {
+                ticker.Stop()
+            })
+        })
+    }()
 
-	app.Get("/counter", func(ctx iris.Context) {
-		ctx.Writef("Counter value = %d", counterValue)
-	})
+    app.Get("/counter", func(ctx iris.Context) {
+        ctx.Writef("Counter value = %d", counterValue)
+    })
 }
 ```
 
@@ -269,16 +269,16 @@ func Configurator(app *iris.Application) {
 package main
 
 import (
-	"counter"
+    "counter"
 
-	"github.com/kataras/iris"
+    "github.com/kataras/iris"
 )
 
 func main() {
-	app := iris.New()
-	app.Configure(counter.Configurator)
+    app := iris.New()
+    app.Configure(counter.Configurator)
 
-	app.Run(iris.Addr(":8080"))
+    app.Run(iris.Addr(":8080"))
 }
 ```
 

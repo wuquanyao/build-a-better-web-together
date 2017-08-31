@@ -627,5 +627,4 @@ type Context interface {
 }
 ```
 
-
 The [examples](https://github.com/kataras/iris/tree/master/_examples) will give you the direction.
