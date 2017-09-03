@@ -152,13 +152,6 @@ app.Get("/myfiles/{directory:path}", func(ctx iris.Context) {
     ctx.Writef("path type accepts any number of path segments, path after /myfiles/ is: %s", ctx.Params().Get("directory"))
 })
 
-// for wildcard path (any number of path segments) without validation you can use:
-// /myfiles/*directory
-// "{param}"'s performance is exactly the same of ":param"'s.
-
-// alternatives -> ":param" for single path parameter and "*paramPath" for wildcard path parameter
-// acquire them by ctx.Params().Get as always.
-
 app.Run(iris.Addr(":8080"))
 }
 ```
