@@ -103,7 +103,7 @@ func contactHandler(ctx iris.Context) {
 
 ## Explore
 
-### Built'n Handlers
+Bellow you can see the source code of some useful handlers to learn of
 
 | Middleware | Example |
 | -----------|-------------|
@@ -114,9 +114,7 @@ func contactHandler(ctx iris.Context) {
 | [profiling (pprof)](pprof) | [iris/_examples/miscellaneous/pprof](https://github.com/kataras/iris/tree/master/_examples/miscellaneous/pprof) |
 | [recovery](recover) | [iris/_examples/miscellaneous/recover](https://github.com/kataras/iris/tree/master/_examples/miscellaneous/recover) |
 
-### Experimental Handlers
-
-Most of the experimental handlers are ported to work with _iris_'s handler form, from third-party sources.
+Some middlewares that really helps you on specific tasks
 
 | Middleware | Description | Example |
 | -----------|--------|-------------|
