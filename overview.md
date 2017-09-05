@@ -7,7 +7,7 @@ to see if you like to proceed to the next sections of this book.
 Assuming that you have already installed Google Go. If not please follow [installation](https://golang.org/doc/install) guide.
 
 ```sh
-go get -u github.com/kataras/iris/...
+go get -u github.com/kataras/iris
 ```
 
 ```go
