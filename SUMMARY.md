@@ -18,6 +18,7 @@
     * [Wrapping the Router](routing_wrap.md)
 * [Error handlers](error_handlers.md)
 * [MVC (Model View Controller) Architectural Pattern](mvc.md)
+* [View - render templates and bind view data](view.md)
 * [Examples](https://github.com/iris-contrib/examples)
 
 > This book is not ready yet, we'll update it soon, check back later on.
