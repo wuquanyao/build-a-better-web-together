@@ -33,7 +33,7 @@ func main() {
 
     // same as app.Handle("GET", "/ping", [...])
     // Method:   GET
-    // Resource: http://context:8080/ping
+    // Resource: http://localhost:8080/ping
     app.Get("/ping", func(ctx iris.Context) {
         ctx.WriteString("pong")
     })
