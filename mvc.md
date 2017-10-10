@@ -70,95 +70,122 @@ If `app.Controller("/assets", new(file.Controller))`
 
 - `func(*Controller) GetByWildard(path string)` - `GET:/assets/{param:path}`
 
+    Supported types for method functions receivers: int, int64, bool and string.
+
+Response via output arguments, optionally, i.e
+
+```go
+func(c *ExampleController) Get() string |
+                                (string, string) |
+                                (string, int) |
+                                int |
+                                (int, string |
+                                (string, error) |
+                                error |
+                                (int, error) |
+                                (customStruct, error) |
+                                customStruct |
+                                (customStruct, int) |
+                                (customStruct, string) |
+                                mvc.Result or (mvc.Result, error)
+```
+
+where [mvc.Result](https://github.com/kataras/iris/blob/master/mvc/method_result.go) is an interface which contains only that function: `Dispatch(ctx iris.Context)`.
+
 ## Using Iris MVC for code reuse
 
 By creating components that are independent of one another, developers are able to reuse components quickly and easily in other applications. The same (or similar) view for one application can be refactored for another application with different data because the view is simply handling how the data is being displayed to the user.
 
 If you're new to back-end web development read about the MVC architectural pattern first, a good start is that [wikipedia article](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller).
 
-
-
-Example Code:
+## Quick MVC Tutorial Part 1
 
 ```go
 package main
 
 import (
     "github.com/kataras/iris"
-
-    "github.com/kataras/iris/middleware/logger"
-    "github.com/kataras/iris/middleware/recover"
+    "github.com/kataras/iris/mvc"
 )
-
-// This example is equivalent to the
-// https://github.com/kataras/iris/blob/master/_examples/hello-world/main.go
 
 func main() {
     app := iris.New()
-    // Optionally, add two built'n handlers
-    // that can recover from any http-relative panics
-    // and log the requests to the terminal.
-    app.Use(recover.New())
-    app.Use(logger.New())
 
-    app.Controller("/", new(ExampleController))
+    app.Controller("/helloworld", new(HelloWorldController))
 
-    // http://localhost:8080
-    // http://localhost:8080/ping
-    // http://localhost:8080/hello
-    app.Run(iris.Addr(":8080"))
+    app.Run(iris.Addr("localhost:8080"))
 }
 
-// ExampleController serves the "/", "/ping" and "/hello".
-type ExampleController struct {
-    iris.Controller
+type HelloWorldController struct {
+    mvc.Controller
+
+    // [ Your fields here ]
+    // Request lifecycle data
+    // Models
+    // Database
+    // Global properties
 }
 
-// Get serves
-// Method:   GET
-// Resource: http://localhost:8080
-func (c *ExampleController) Get() {
-    c.ContentType = "text/html"
-    c.Text = "<h1>Welcome!</h1>"
+//
+// GET: /helloworld
+
+func (c *HelloWorldController) Get() string {
+    return "This is my default action..."
 }
 
-// GetPing serves
-// Method:   GET
-// Resource: http://localhost:8080/ping
-func (c *ExampleController) GetPing() {
-    c.Text = "pong"
+//
+// GET: /helloworld/{name:string}
+
+func (c *HelloWorldController) GetBy(name string) string {
+    return "Hello " + name
 }
 
-// GetHello serves
-// Method:   GET
-// Resource: http://localhost:8080/hello
-func (c *ExampleController) GetHello() {
-    c.Ctx.JSON(iris.Map{"message": "Hello Iris!"})
+//
+// GET: /helloworld/welcome
+
+func (c *HelloWorldController) GetWelcome() (string, int) {
+    return "This is the GetWelcome action func...", iris.StatusOK
 }
 
-/* Can use more than one, the factory will make sure
-that the correct http methods are being registered for each route
-for this controller, uncomment these if you want:
+//
+// GET: /helloworld/welcome/{name:string}/{numTimes:int}
 
-func (c *ExampleController) Post() {}
-func (c *ExampleController) Put() {}
-func (c *ExampleController) Delete() {}
-func (c *ExampleController) Connect() {}
-func (c *ExampleController) Head() {}
-func (c *ExampleController) Patch() {}
-func (c *ExampleController) Options() {}
-func (c *ExampleController) Trace() {}
+func (c *HelloWorldController) GetWelcomeBy(name string, numTimes int) {
+    // Access to the low-level Context,
+    // output arguments are optional of course so we don't have to use them here.
+    c.Ctx.Writef("Hello %s, NumTimes is: %d", name, numTimes)
+}
+
+/*
+func (c *HelloWorldController) Post() {} handles HTTP POST method requests
+func (c *HelloWorldController) Put() {} handles HTTP PUT method requests
+func (c *HelloWorldController) Delete() {} handles HTTP DELETE method requests
+func (c *HelloWorldController) Connect() {} handles HTTP CONNECT method requests
+func (c *HelloWorldController) Head() {} handles HTTP HEAD method requests
+func (c *HelloWorldController) Patch() {} handles HTTP PATCH method requests
+func (c *HelloWorldController) Options() {} handles HTTP OPTIONS method requests
+func (c *HelloWorldController) Trace() {} handles HTTP TRACE method requests
 */
 
 /*
-func (c *ExampleController) All() {}
+func (c *HelloWorldController) All() {} handles All method requests
 //        OR
-func (c *ExampleController) Any() {}
+func (c *HelloWorldController) Any() {} handles All method requests
 */
 ```
 
-Follow the examples below
+> The [_examples/mvc](https://github.com/kataras/iris/tree/_examples/mvc) and [mvc/controller_test.go](https://github.com/kataras/iris/blob/master/mvc/controller_test.go) files explain each feature with simple paradigms, they show how you can take advandage of the Iris MVC Binder, Iris MVC Models and many more...
 
-- [Session Controller](https://github.com/kataras/iris/blob/master/_examples/mvc/session-controller/main.go)
-- [A simple but featured Controller with model and views](https://github.com/kataras/iris/tree/master/_examples/mvc/controller-with-model-and-view).
-- [Login showcase](https://github.com/kataras/iris/tree/master/mvc/login) **NEW**
+Every `exported` func prefixed with an HTTP Method(`Get`, `Post`, `Put`, `Delete`...) in a controller is callable as an HTTP endpoint. In the sample above, all funcs writes a string to the response. Note the comments preceding each method.
+
+An HTTP endpoint is a targetable URL in the web application, such as `http://localhost:8080/helloworld`, and combines the protocol used: HTTP, the network location of the web server (including the TCP port): `localhost:8080` and the target URI `/helloworld`.
+
+The first comment states this is an [HTTP GET](https://www.w3schools.com/tags/ref_httpmethods.asp) method that is invoked by appending "/helloworld" to the base URL. The third comment specifies an [HTTP GET](https://www.w3schools.com/tags/ref_httpmethods.asp) method that is invoked by appending "/helloworld/welcome" to the URL.
+
+Controller knows how to handle the "name" on `GetBy` or the "name" and "numTimes" at `GetWelcomeBy`, because of the `By` keyword, and builds the dynamic route without boilerplate; the third comment specifies an [HTTP GET](https://www.w3schools.com/tags/ref_httpmethods.asp) dynamic method that is invoked by any URL that starts with "/helloworld/welcome" and followed by two more path parts, the first one can accept any value and the second can accept only numbers, i,e: "http://localhost:8080/helloworld/welcome/golang/32719", otherwise a [404 Not Found HTTP Error](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5) will be sent to the client instead.
+
+----
+
+Click [here](mvc_2.md) to navigate to the mvc tutorial part 2.
+
+----

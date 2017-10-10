@@ -19,6 +19,8 @@
 * [Error handlers](error_handlers.md)
 * [MVC (Model View Controller) Architectural Pattern](mvc.md)
 * [View - render templates and bind view data](view.md)
+    * [Quick MVC Tutorial Part 2](mvc_2.md)
+    * [Quick MVC Tutorial Part 3](mvc_3.md)
 * [Sessions](sessions.md)
 * [Websockets](websockets.md)
 * [Examples](https://github.com/iris-contrib/examples)
