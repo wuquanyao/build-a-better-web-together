@@ -79,10 +79,11 @@ func(c *ExampleController) Get() string |
                                 (string, string) |
                                 (string, int) |
                                 int |
-                                (int, string |
+                                (int, string) |
                                 (string, error) |
                                 error |
                                 (int, error) |
+                                (any, bool) |
                                 (customStruct, error) |
                                 customStruct |
                                 (customStruct, int) |
