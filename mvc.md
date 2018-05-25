@@ -1,60 +1,92 @@
 # MVC
 
 ![](https://github.com/kataras/iris/raw/master/_examples/mvc/web_mvc_diagram.png)
-
-Iris has **first-class support for the MVC pattern**, you'll not find
+Iris has **first-class support for the MVC (Model View Controller) pattern**, you'll not find
 these stuff anywhere else in the Go world.
 
-Iris supports Request data, Models, Persistence Data and Binding
+Iris web framework supports Request data, Models, Persistence Data and Binding
 with the fastest possible execution.
 
-## Characteristics
+**Characteristics**
 
 All HTTP Methods are supported, for example if want to serve `GET`
 then the controller should have a function named `Get()`,
-you can define more than one method function to serve in the same Controller struct.
+you can define more than one method function to serve in the same Controller.
+
+Serve custom controller's struct's methods as handlers with custom paths(even with regex parametermized path) via the `BeforeActivation` custom event callback, per-controller. Example:
+
+```go
+import (
+    "github.com/kataras/iris"
+    "github.com/kataras/iris/mvc"
+)
+
+func main() {
+    app := iris.New()
+    mvc.Configure(app.Party("/root"), myMVC)
+    app.Run(iris.Addr(":8080"))
+}
+
+func myMVC(app *mvc.Application) {
+    // app.Register(...)
+    // app.Router.Use/UseGlobal/Done(...)
+    app.Handle(new(MyController))
+}
+
+type MyController struct {}
+
+func (m *MyController) BeforeActivation(b mvc.BeforeActivation) {
+    // b.Dependencies().Add/Remove
+    // b.Router().Use/UseGlobal/Done // and any standard API call you already know
+
+    // 1-> Method
+    // 2-> Path
+    // 3-> The controller's function name to be parsed as handler
+    // 4-> Any handlers that should run before the MyCustomHandler
+    b.Handle("GET", "/something/{id:long}", "MyCustomHandler", anyMiddleware...)
+}
+
+// GET: http://localhost:8080/root
+func (m *MyController) Get() string { return "Hey" }
+
+// GET: http://localhost:8080/root/something/{id:long}
+func (m *MyController) MyCustomHandler(id int64) string { return "MyCustomHandler says Hey" }
+```
 
 Persistence data inside your Controller struct (share data between requests)
-via `iris:"persistence"` tag right to the field or Bind using `app.Controller("/" , new(myController), theBindValue)`.
+by defining services to the Dependencies or have a `Singleton` controller scope.
 
-Models inside your Controller struct (set-ed at the Method function and rendered by the View)
-via `iris:"model"` tag right to the field, i.e ```User UserModel `iris:"model" name:"user"` ``` view will recognise it as `{{.user}}`.
-If `name` tag is missing then it takes the field's name, in this case the `"User"`.
+Share the dependencies between controllers or register them on a parent MVC Application, and ability
+to modify dependencies per-controller on the `BeforeActivation` optional event callback inside a Controller,
+i.e `func(c *MyController) BeforeActivation(b mvc.BeforeActivation) { b.Dependencies().Add/Remove(...) }`.
 
-Access to the request path and its parameters via the `Path and Params` fields.
+Access to the `Context` as a controller's field(no manual binding is neede) i.e `Ctx iris.Context` or via a method's input argument, i.e `func(ctx iris.Context, otherArguments...)`.
 
-Access to the template file that should be rendered via the `Tmpl` field.
+Models inside your Controller struct (set-ed at the Method function and rendered by the View).
+You can return models from a controller's method or set a field in the request lifecycle
+and return that field to another method, in the same request lifecycle.
 
-Access to the template data that should be rendered inside
-the template file via `Data` field.
-
-Access to the template layout via the `Layout` field.
-
-Access to the low-level `iris.Context` via the `Ctx` field.
-
-Get the relative request path by using the controller's name via `RelPath()`.
-
-Get the relative template path directory by using the controller's name via `RelTmpl()`.
-
-Flow as you used to, `Controllers` can be registered to any `Party`,
-including Subdomains, the Party's begin and done handlers work as expected.
+Flow as you used to, mvc application has its own `Router` which is a type of `iris/router.Party`, the standard iris api.
+`Controllers` can be registered to any `Party`, including Subdomains, the Party's begin and done handlers work as expected.
 
 Optional `BeginRequest(ctx)` function to perform any initialization before the method execution,
 useful to call middlewares or when many methods use the same collection of data.
 
 Optional `EndRequest(ctx)` function to perform any finalization after any method executed.
 
-Inheritance, recursively, see for example our `mvc.SessionController`, it has the `iris.Controller` as an embedded field
-and it adds its logic to its `BeginRequest`, [here](https://github.com/kataras/iris/blob/master/mvc/session_controller.go). 
+Inheritance, recursively, see for example our `mvc.SessionController`, it has the `Session *sessions.Session` and `Manager *sessions.Sessions` as embedded fields
+which are filled by its `BeginRequest`, [here](https://github.com/kataras/iris/blob/master/mvc/session_controller.go).
+This is just an example, you could use the `sessions.Session` which returned from the manager's `Start` as a dynamic dependency to the MVC Application, i.e
+`mvcApp.Register(sessions.New(sessions.Config{Cookie: "iris_session_id"}).Start)`.
 
-Read access to the current route  via the `Route` field.
+Access to the dynamic path parameters via the controller's methods' input arguments, no binding is needed.
+When you use the Iris' default syntax to parse handlers from a controller, you need to suffix the methods
+with the `By` word, uppercase is a new sub path. Example:
 
-Register one or more relative paths and able to get path parameters, i.e
+If `mvc.New(app.Party("/user")).Handle(new(user.Controller))`
 
-If `app.Controller("/user", new(user.Controller))`
-
-- `func(*Controller) Get()` - `GET:/user` , as usual.
-- `func(*Controller) Post()` - `POST:/user`, as usual.
+- `func(*Controller) Get()` - `GET:/user`.
+- `func(*Controller) Post()` - `POST:/user`.
 - `func(*Controller) GetLogin()` - `GET:/user/login`
 - `func(*Controller) PostLogin()` - `POST:/user/login`
 - `func(*Controller) GetProfileFollowers()` - `GET:/user/profile/followers`
@@ -62,11 +94,11 @@ If `app.Controller("/user", new(user.Controller))`
 - `func(*Controller) GetBy(id int64)` - `GET:/user/{param:long}`
 - `func(*Controller) PostBy(id int64)` - `POST:/user/{param:long}`
 
-If `app.Controller("/profile", new(profile.Controller))`
+If `mvc.New(app.Party("/profile")).Handle(new(profile.Controller))`
 
 - `func(*Controller) GetBy(username string)` - `GET:/profile/{param:string}`
 
-If `app.Controller("/assets", new(file.Controller))`
+If `mvc.New(app.Party("/assets")).Handle(new(file.Controller))`
 
 - `func(*Controller) GetByWildard(path string)` - `GET:/assets/{param:path}`
 
@@ -91,7 +123,7 @@ func(c *ExampleController) Get() string |
                                 mvc.Result or (mvc.Result, error)
 ```
 
-where [mvc.Result](https://github.com/kataras/iris/blob/master/mvc/method_result.go) is an interface which contains only that function: `Dispatch(ctx iris.Context)`.
+where [mvc.Result](https://github.com/kataras/iris/blob/master/mvc/go19.go#L10) is an [interface](https://github.com/kataras/iris/blob/master/hero/func_result.go#L18) which contains only that function: `Dispatch(ctx iris.Context)`.
 
 ## Using Iris MVC for code reuse
 
@@ -101,77 +133,153 @@ If you're new to back-end web development read about the MVC architectural patte
 
 ## Quick MVC Tutorial Part 1
 
+This example is equivalent to the
+https://github.com/kataras/iris/blob/master/_examples/hello-world/main.go
+
+It seems that additional code you
+have to write doesn't worth it
+but remember that, this example
+does not make use of iris mvc features like
+the Model, Persistence or the View engine neither the Session,
+it's very simple for learning purposes,
+probably you'll never use such
+as simple controller anywhere in your app.
+
+The cost we have on this example for using MVC
+on the "/hello" path which serves JSON
+is ~2MB per 20MB throughput on my personal laptop,
+it's tolerated for the majority of the applications
+but you can choose
+what suits you best with Iris, low-level handlers: performance
+or high-level controllers: easier to maintain and smaller codebase on large applications.
+
 ```go
 package main
 
 import (
-    "github.com/kataras/iris"
-    "github.com/kataras/iris/mvc"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/mvc"
+
+	"github.com/kataras/iris/middleware/logger"
+	"github.com/kataras/iris/middleware/recover"
 )
 
 func main() {
-    app := iris.New()
+	app := iris.New()
+	// Optionally, add two built'n handlers
+	// that can recover from any http-relative panics
+	// and log the requests to the terminal.
+	app.Use(recover.New())
+	app.Use(logger.New())
 
-    app.Controller("/helloworld", new(HelloWorldController))
+	// Serve a controller based on the root Router, "/".
+	mvc.New(app).Handle(new(ExampleController))
 
-    app.Run(iris.Addr("localhost:8080"))
+	// http://localhost:8080
+	// http://localhost:8080/ping
+	// http://localhost:8080/hello
+	// http://localhost:8080/custom_path
+	app.Run(iris.Addr(":8080"))
 }
 
-type HelloWorldController struct {
-    mvc.Controller
+// ExampleController serves the "/", "/ping" and "/hello".
+type ExampleController struct{}
 
-    // [ Your fields here ]
-    // Request lifecycle data
-    // Models
-    // Database
-    // Global properties
+// Get serves
+// Method:   GET
+// Resource: http://localhost:8080
+func (c *ExampleController) Get() mvc.Result {
+	return mvc.Response{
+		ContentType: "text/html",
+		Text:        "<h1>Welcome</h1>",
+	}
 }
 
+// GetPing serves
+// Method:   GET
+// Resource: http://localhost:8080/ping
+func (c *ExampleController) GetPing() string {
+	return "pong"
+}
+
+// GetHello serves
+// Method:   GET
+// Resource: http://localhost:8080/hello
+func (c *ExampleController) GetHello() interface{} {
+	return map[string]string{"message": "Hello Iris!"}
+}
+
+// BeforeActivation called once, before the controller adapted to the main application
+// and of course before the server ran.
+// After version 9 you can also add custom routes for a specific controller's methods.
+// Here you can register custom method's handlers
+// use the standard router with `ca.Router` to do something that you can do without mvc as well,
+// and add dependencies that will be binded to a controller's fields or method function's input arguments.
+func (c *ExampleController) BeforeActivation(b mvc.BeforeActivation) {
+	anyMiddlewareHere := func(ctx iris.Context) {
+		ctx.Application().Logger().Warnf("Inside /custom_path")
+		ctx.Next()
+	}
+	b.Handle("GET", "/custom_path", "CustomHandlerWithoutFollowingTheNamingGuide", anyMiddlewareHere)
+
+	// or even add a global middleware based on this controller's router,
+	// which in this example is the root "/":
+	// b.Router().Use(myMiddleware)
+}
+
+// CustomHandlerWithoutFollowingTheNamingGuide serves
+// Method:   GET
+// Resource: http://localhost:8080/custom_path
+func (c *ExampleController) CustomHandlerWithoutFollowingTheNamingGuide() string {
+	return "hello from the custom handler without following the naming guide"
+}
+
+// GetUserBy serves
+// Method:   GET
+// Resource: http://localhost:8080/user/{username:string}
+// By is a reserved "keyword" to tell the framework that you're going to
+// bind path parameters in the function's input arguments, and it also
+// helps to have "Get" and "GetBy" in the same controller.
 //
-// GET: /helloworld
+// func (c *ExampleController) GetUserBy(username string) mvc.Result {
+// 	return mvc.View{
+// 		Name: "user/username.html",
+// 		Data: username,
+// 	}
+// }
 
-func (c *HelloWorldController) Get() string {
-    return "This is my default action..."
-}
+/* Can use more than one, the factory will make sure
+that the correct http methods are being registered for each route
+for this controller, uncomment these if you want:
 
-//
-// GET: /helloworld/{name:string}
-
-func (c *HelloWorldController) GetBy(name string) string {
-    return "Hello " + name
-}
-
-//
-// GET: /helloworld/welcome
-
-func (c *HelloWorldController) GetWelcome() (string, int) {
-    return "This is the GetWelcome action func...", iris.StatusOK
-}
-
-//
-// GET: /helloworld/welcome/{name:string}/{numTimes:int}
-
-func (c *HelloWorldController) GetWelcomeBy(name string, numTimes int) {
-    // Access to the low-level Context,
-    // output arguments are optional of course so we don't have to use them here.
-    c.Ctx.Writef("Hello %s, NumTimes is: %d", name, numTimes)
-}
-
-/*
-func (c *HelloWorldController) Post() {} handles HTTP POST method requests
-func (c *HelloWorldController) Put() {} handles HTTP PUT method requests
-func (c *HelloWorldController) Delete() {} handles HTTP DELETE method requests
-func (c *HelloWorldController) Connect() {} handles HTTP CONNECT method requests
-func (c *HelloWorldController) Head() {} handles HTTP HEAD method requests
-func (c *HelloWorldController) Patch() {} handles HTTP PATCH method requests
-func (c *HelloWorldController) Options() {} handles HTTP OPTIONS method requests
-func (c *HelloWorldController) Trace() {} handles HTTP TRACE method requests
+func (c *ExampleController) Post() {}
+func (c *ExampleController) Put() {}
+func (c *ExampleController) Delete() {}
+func (c *ExampleController) Connect() {}
+func (c *ExampleController) Head() {}
+func (c *ExampleController) Patch() {}
+func (c *ExampleController) Options() {}
+func (c *ExampleController) Trace() {}
 */
 
 /*
-func (c *HelloWorldController) All() {} handles All method requests
+func (c *ExampleController) All() {}
 //        OR
-func (c *HelloWorldController) Any() {} handles All method requests
+func (c *ExampleController) Any() {}
+
+
+
+func (c *ExampleController) BeforeActivation(b mvc.BeforeActivation) {
+	// 1 -> the HTTP Method
+	// 2 -> the route's path
+	// 3 -> this controller's method name that should be handler for that route.
+	b.Handle("GET", "/mypath/{param}", "DoIt", optionalMiddlewareHere...)
+}
+
+// After activation, all dependencies are set-ed - so read only access on them
+// but still possible to add custom controller or simple standard handlers.
+func (c *ExampleController) AfterActivation(a mvc.AfterActivation) {}
+
 */
 ```
 
