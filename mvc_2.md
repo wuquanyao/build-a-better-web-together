@@ -1,4 +1,4 @@
-# Quick MVC Tutorial Part 2
+# Movies MVC Application
 
 Iris has a very powerful and **blazing [fast](https://github.com/kataras/iris/tree/master/_benchmarks)** MVC support, you can return any value of any type from a method function
 and it will be sent to the client as expected.
@@ -583,6 +583,6 @@ func movies(app *mvc.Application) {
 
 ----
 
-Click [here](mvc_3.md) to navigate to the mvc tutorial part 3.
+Click [here](mvc_3.md) to navigate to the `MVC loves Websockets`.
 
 ----

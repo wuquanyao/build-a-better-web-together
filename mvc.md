@@ -295,6 +295,6 @@ Controller knows how to handle the "name" on `GetBy` or the "name" and "numTimes
 
 ----
 
-Click [here](mvc_2.md) to navigate to the mvc tutorial part 2.
+Click [here](mvc_2.md) to navigate to the `Movies MVC Application` sub section.
 
 ----
