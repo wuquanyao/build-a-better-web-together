@@ -62,49 +62,54 @@ Let's do the same, this time with the [MVC Architectural Pattern](https://en.wik
 package main
 
 import (
-    "github.com/kataras/iris"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/mvc"
 
-    "github.com/kataras/iris/middleware/logger"
-    "github.com/kataras/iris/middleware/recover"
+	"github.com/kataras/iris/middleware/logger"
+	"github.com/kataras/iris/middleware/recover"
 )
 
-func main() {
-    app := iris.New()
-    app.Use(recover.New())
-    app.Use(logger.New())
+func main() *iris.Application {
+	app := iris.New()
+	// Optionally, add two builtin handlers
+	// that can recover from any http-relative panics
+	// and log the requests to the terminal.
+	app.Use(recover.New())
+	app.Use(logger.New())
 
-    app.Controller("/", new(ExampleController))
-
-    // http://localhost:8080
-    // http://localhost:8080/ping
-    // http://localhost:8080/hello
-    app.Run(iris.Addr(":8080"))
+	// Serve a controller based on the root Router, "/".
+	mvc.New(app).Handle(new(ExampleController))
+	// http://localhost:8080
+	// http://localhost:8080/ping
+	// http://localhost:8080/hello
+	app.Run(iris.Addr(":8080"))
 }
 
 // ExampleController serves the "/", "/ping" and "/hello".
-type ExampleController struct {
-    iris.Controller
-}
+type ExampleController struct{}
 
 // Get serves
 // Method:   GET
 // Resource: http://localhost:8080
-func (c *ExampleController) Get() {
-    c.Ctx.HTML("<h1>Welcome</h1>")
+func (c *ExampleController) Get() mvc.Result {
+	return mvc.Response{
+		ContentType: "text/html",
+		Text:        "<h1>Welcome</h1>",
+	}
 }
 
 // GetPing serves
 // Method:   GET
 // Resource: http://localhost:8080/ping
-func (c *ExampleController) GetPing() {
-    c.Ctx.WriteString("pong")
+func (c *ExampleController) GetPing() string {
+	return "pong"
 }
 
 // GetHello serves
 // Method:   GET
 // Resource: http://localhost:8080/hello
-func (c *ExampleController) GetHello() {
-    c.Ctx.JSON(iris.Map{"message": "Hello Iris!"})
+func (c *ExampleController) GetHello() interface{} {
+	return map[string]string{"message": "Hello Iris!"}
 }
 ```
 
